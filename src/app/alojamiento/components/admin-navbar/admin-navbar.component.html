@@ -1,0 +1,21 @@
+<header class="admin-navbar">
+  <div class="navbar-inner">
+    <a class="brand" routerLink="/admin/dashboard">
+      <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="brand__logo" />
+    </a>
+
+    <nav class="nav-links">
+      <a
+        *ngFor="let link of links"
+        [routerLink]="link.route"
+        routerLinkActive="active"
+        class="nav-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ link.label }}
+      </a>
+    </nav>
+
+    <a class="logout" routerLink="/login">Cerrar Sesión</a>
+  </div>
+</header>

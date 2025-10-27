@@ -1,0 +1,17 @@
+<div class="admin-layout">
+  <app-admin-navbar></app-admin-navbar>
+
+  <section class="admin-hero" [style.background-image]="heroBackground">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>{{ heroTitle }}</h1>
+      <p *ngIf="heroSubtitle">{{ heroSubtitle }}</p>
+    </div>
+  </section>
+
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-admin-footer></app-admin-footer>
+</div>

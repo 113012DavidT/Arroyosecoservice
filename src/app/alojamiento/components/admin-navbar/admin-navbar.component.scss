@@ -1,0 +1,85 @@
+.admin-navbar {
+  background: #fff;
+  border-bottom: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  min-height: 72px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.brand__logo {
+  height: 52px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: #1f2937;
+  border-bottom-color: #d1d5db;
+}
+
+.nav-link.active {
+  color: #1c66d6;
+  border-bottom-color: #1c66d6;
+}
+
+.logout {
+  text-decoration: none;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.logout:hover {
+  background: #fee2e2;
+}
+
+@media (max-width: 968px) {
+  .navbar-inner {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    gap: 1rem;
+  }
+}

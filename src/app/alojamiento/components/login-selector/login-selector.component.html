@@ -1,0 +1,48 @@
+<section class="login-selector">
+  <div class="visual">
+    <div class="visual-overlay"></div>
+    <div class="visual-text">
+      <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="logo" />
+      <h1>Arroyo Seco</h1>
+      <p>"El tesoro escondido de Querétaro"</p>
+    </div>
+  </div>
+
+  <div class="selector-panel">
+    <div class="selector-content">
+      <h2>Selecciona tu tipo de usuario</h2>
+      <p class="subtitle">Elige cómo deseas acceder a la plataforma</p>
+
+      <div class="user-cards">
+        <a
+          *ngFor="let type of userTypes"
+          [routerLink]="type.route"
+          class="user-card"
+          [style.--card-color]="type.color"
+        >
+          <div class="card-icon" [ngSwitch]="type.icon">
+            <svg *ngSwitchCase="'admin'" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+            <svg *ngSwitchCase="'oferente'" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <svg *ngSwitchCase="'cliente'" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+
+          <h3>{{ type.title }}</h3>
+          <p>{{ type.description }}</p>
+
+          <span class="cta">
+            Iniciar sesión
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

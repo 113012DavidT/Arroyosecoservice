@@ -1,0 +1,17 @@
+<div class="oferente-layout">
+  <app-oferente-navbar></app-oferente-navbar>
+
+  <section class="hero" [style]="heroStyle">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>{{ heroTitle }}</h1>
+      <p *ngIf="heroSubtitle">{{ heroSubtitle }}</p>
+    </div>
+  </section>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-oferente-footer></app-oferente-footer>
+</div>
