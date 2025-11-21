@@ -62,6 +62,32 @@
   top: 90px;
 }
 
+/* Ensure material form-field fits the booking card and label doesn't overlap */
+.booking mat-form-field {
+  width: 100%;
+}
+
+/* Override Material styles for better date display */
+.booking ::ng-deep .mat-mdc-text-field-wrapper {
+  background: transparent;
+}
+
+.booking ::ng-deep .mat-date-range-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.booking ::ng-deep .mat-date-range-input-separator {
+  color: #6b7280;
+  margin: 0 0.5rem;
+}
+
+/* Make the date inputs visually consistent with other inputs */
+.booking input[matStartDate], .booking input[matEndDate] {
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+}
+
 .booking h3 {
   margin: 0;
   font-size: 1.6rem;
@@ -92,7 +118,7 @@
   letter-spacing: 0.3px;
 }
 
-.booking input {
+.booking input:not([matStartDate]):not([matEndDate]) {
   padding: 0.75rem 0.85rem;
   border: 1px solid #d1d5db;
   border-radius: 10px;
@@ -134,3 +160,64 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Calendario ocupado */
+::ng-deep .reserved-date .mat-calendar-body-cell-content {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-radius: 50%;
+}
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: #6b7280;
+  font-size: .9rem;
+  margin: .25rem 0 .5rem;
+}
+.calendar-legend .dot {
+  width: 10px;
+  height: 10px;
+  background: #b91c1c;
+  border-radius: 50%;
+}
+
+.total {
+  margin-top: .5rem;
+  font-weight: 700;
+  color: #0e7490;
+}
+
+/* Modal pago */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed;
+  inset: 10% auto auto 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 560px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__header, .modal__footer { padding: 1rem 1.25rem; display: flex; align-items: center; }
+.modal__header { justify-content: space-between; border-bottom: 1px solid #eee; }
+.modal__body { padding: 1.25rem; display: grid; gap: .75rem; }
+.modal__footer { justify-content: flex-end; gap: .5rem; border-top: 1px solid #eee; }
+.modal .close { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+
+.bank-data { margin: 0; padding-left: 1rem; }
+.bank-data li { margin: .25rem 0; }
+
+.upload { display: grid; gap: .5rem; font-weight: 600; color: #374151; }
+.upload input[type="file"] { border: 1px solid #d1d5db; border-radius: 10px; padding: .75rem; }

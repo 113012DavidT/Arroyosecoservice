@@ -6,6 +6,7 @@ import { AuthService } from './core/services/auth.service';
 import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([httpInterceptor])),
     AuthService,
     ApiService,
-    UserService
+    UserService,
+    provideAnimations()
   ]
 };

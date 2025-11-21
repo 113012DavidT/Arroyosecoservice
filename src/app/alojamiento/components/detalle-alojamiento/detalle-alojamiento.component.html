@@ -13,23 +13,62 @@
 			</p>
 		</div>
 
-		<aside class="booking">
-			<h3>$950 <small>/ noche</small></h3>
-			<form #b="ngForm" (ngSubmit)="reservar(b)">
-				<label>
-					Fecha de entrada
-					<input type="date" name="entrada" [(ngModel)]="booking.entrada" required>
-				</label>
-				<label>
-					Fecha de salida
-					<input type="date" name="salida" [(ngModel)]="booking.salida" required>
-				</label>
-				<label>
-					Huéspedes
-					<input type="number" name="huespedes" min="1" [(ngModel)]="booking.huespedes" required>
-				</label>
-				<button type="submit" [disabled]="b.invalid">Reservar ahora</button>
-			</form>
-		</aside>
+				<aside class="booking" *ngIf="alojamiento">
+						<h3>${{ alojamiento.precioPorNoche }} <small>/ noche</small></h3>
+						<form #b="ngForm" (ngSubmit)="abrirModalPago(b)">
+							<mat-form-field appearance="outline">
+								<mat-label>Rango de fechas</mat-label>
+								<mat-date-range-input [rangePicker]="picker">
+									<input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" required />
+									<input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" required />
+								</mat-date-range-input>
+								<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+								<mat-date-range-picker #picker [dateClass]="dateClass"></mat-date-range-picker>
+							</mat-form-field>
+
+							<div class="calendar-legend">
+								<span class="dot"></span> Fechas en rojo: ocupadas (Confirmada)
+							</div>
+
+							<label>
+								Huéspedes
+								<input type="number" name="huespedes" min="1" [(ngModel)]="booking.huespedes" required>
+							</label>
+
+							<div class="total" *ngIf="total > 0">
+								Total a pagar: ${{ total.toLocaleString() }} MXN
+							</div>
+
+							<button type="submit" [disabled]="b.invalid || !total">Reservar ahora</button>
+						</form>
+				</aside>
 	</div>
 </section>
+
+<div class="modal-backdrop" *ngIf="showPagoModal" (click)="cerrarModalPago()"></div>
+<div class="modal" *ngIf="showPagoModal" (click)="$event.stopPropagation()">
+	<div class="modal__header">
+		<h3>Pago por transferencia</h3>
+		<button class="close" (click)="cerrarModalPago()">×</button>
+	</div>
+	<div class="modal__body">
+		<p>Realiza la transferencia con los siguientes datos:</p>
+		<ul class="bank-data">
+			<li><strong>Nombre:</strong> Arroyo Seco Turístico S.A. de C.V.</li>
+			<li><strong>Banco:</strong> Banco Ejemplo</li>
+			<li><strong>Cuenta/CLABE:</strong> 012345678901234567</li>
+			<li><strong>Referencia:</strong> {{ alojamientoId }}-{{ total }}</li>
+		</ul>
+
+		<label class="upload">
+			Comprobante (PDF/JPG/PNG)
+			<input type="file" accept=".pdf,.png,.jpg,.jpeg,image/*,application/pdf" (change)="onComprobanteChange($event)" required />
+		</label>
+	</div>
+	<div class="modal__footer">
+		<button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
+		<button class="btn primary" (click)="confirmarReservaYComprobante()" [disabled]="!comprobanteFile || creando">
+			{{ creando ? 'Procesando...' : 'Confirmar y enviar comprobante' }}
+		</button>
+	</div>
+	</div>

@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
+import { first } from 'rxjs/operators';
 
 interface AlojamientoForm {
   nombre: string;
@@ -21,10 +23,11 @@ interface AlojamientoForm {
   templateUrl: './form-registro-alojamiento.component.html',
   styleUrl: './form-registro-alojamiento.component.scss'
 })
-export class FormRegistroAlojamientoComponent {
+export class FormRegistroAlojamientoComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private alojamientosService = inject(AlojamientoService);
 
   idEdicion: string | null = null;
   formModel: AlojamientoForm = {
@@ -39,18 +42,27 @@ export class FormRegistroAlojamientoComponent {
 
   constructor() {
     this.idEdicion = this.route.snapshot.paramMap.get('id');
+  }
 
+  ngOnInit(): void {
     if (this.idEdicion) {
-      // Pre-cargar datos simulados para edición
-      this.formModel = {
-        nombre: 'CABAÑA LUXURY WOOD',
-        ubicacion: 'Zona Barranca de la Virgen, Arroyo Seco, Querétaro',
-        huespedes: 4,
-        habitaciones: 2,
-        banos: 2,
-        precio: 1350,
-        fotos: ['assets/images/hero-oferentes.svg']
-      };
+      const id = parseInt(this.idEdicion, 10);
+      if (id) {
+        this.alojamientosService.getById(id).pipe(first()).subscribe({
+          next: (a: AlojamientoDto) => {
+            this.formModel = {
+              nombre: a.nombre,
+              ubicacion: a.ubicacion,
+              huespedes: a.maxHuespedes,
+              habitaciones: a.habitaciones,
+              banos: a.banos,
+              precio: a.precioPorNoche,
+              fotos: [a.fotoPrincipal, ...(a.fotosUrls || [])].filter(Boolean) as string[]
+            };
+          },
+          error: () => this.toastService.error('No se pudo cargar el alojamiento')
+        });
+      }
     }
   }
 
@@ -69,13 +81,27 @@ export class FormRegistroAlojamientoComponent {
 
   onSubmit(form: NgForm) {
     if (form.invalid) return;
+    const payload: AlojamientoDto = {
+      nombre: this.formModel.nombre,
+      ubicacion: this.formModel.ubicacion,
+      maxHuespedes: this.formModel.huespedes,
+      habitaciones: this.formModel.habitaciones,
+      banos: this.formModel.banos,
+      precioPorNoche: this.formModel.precio,
+      fotoPrincipal: this.formModel.fotos[0] || '',
+      fotosUrls: this.formModel.fotos.slice(1)
+    };
+    const obs = this.idEdicion
+      ? this.alojamientosService.update(parseInt(this.idEdicion!, 10), payload)
+      : this.alojamientosService.create(payload);
 
-    const accion = this.idEdicion ? 'actualizado' : 'registrado';
-    this.toastService.success(`Alojamiento ${accion} exitosamente`);
-
-    // Simular guardado y regresar a lista
-    setTimeout(() => {
-      this.router.navigateByUrl('/oferente/hospedajes');
-    }, 1000);
+    obs.pipe(first()).subscribe({
+      next: () => {
+        const accion = this.idEdicion ? 'actualizado' : 'registrado';
+        this.toastService.success(`Alojamiento ${accion} exitosamente`);
+        this.router.navigateByUrl('/oferente/hospedajes');
+      },
+      error: () => this.toastService.error('No se pudo guardar el alojamiento')
+    });
   }
 }

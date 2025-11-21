@@ -15,6 +15,7 @@ import { LoginSelectorComponent } from './alojamiento/components/login-selector/
 import { FormRegistroAlojamientoComponent } from './alojamiento/components/form-registro-alojamiento/form-registro-alojamiento.component';
 import { OferenteSolicitudComponent } from './alojamiento/components/oferente-solicitud/oferente-solicitud.component';
 import { ClienteLoginComponent } from './alojamiento/components/cliente-login/cliente-login.component';
+import { ClienteRegisterComponent } from './alojamiento/components/cliente-register/cliente-register.component';
 import { ClienteLayoutComponent } from './alojamiento/components/cliente-layout/cliente-layout.component';
 import { ListaAlojamientosComponent } from './alojamiento/components/lista-alojamientos/lista-alojamientos.component';
 import { DetalleAlojamientoComponent } from './alojamiento/components/detalle-alojamiento/detalle-alojamiento.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
       {
         path: '',
         component: AdminLayoutComponent,
+        // canActivate: [adminGuard],
         children: [
           {
             path: 'dashboard',
@@ -72,6 +74,7 @@ export const routes: Routes = [
       {
         path: '',
         component: OferenteLayoutComponent,
+        // canActivate: [authGuard],
         children: [
           {
             path: 'dashboard',
@@ -147,6 +150,7 @@ export const routes: Routes = [
     path: 'cliente',
     children: [
       { path: 'login', component: ClienteLoginComponent },
+  { path: 'registrar', component: ClienteRegisterComponent },
       {
         path: '',
         component: ClienteLayoutComponent,
@@ -171,6 +175,7 @@ export const routes: Routes = [
           {
             path: 'reservas',
             component: ClienteReservasComponent,
+            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mis Reservas',
               heroSubtitle: 'Gestiona tus hospedajes reservados.',
@@ -180,6 +185,7 @@ export const routes: Routes = [
           {
             path: 'notificaciones',
             component: ClienteNotificacionesComponent,
+            // canActivate: [authGuard],
             data: {
               heroTitle: 'Notificaciones',
               heroSubtitle: 'Mantente al día con nuestras novedades.',
@@ -189,6 +195,7 @@ export const routes: Routes = [
           {
             path: 'perfil',
             component: ClientePerfilComponent,
+            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mi Perfil',
               heroSubtitle: 'Administra tu información personal.',
@@ -198,6 +205,7 @@ export const routes: Routes = [
           {
             path: 'favoritos',
             component: ClienteFavoritosComponent,
+            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mis Favoritos',
               heroSubtitle: 'Alojamientos guardados para más tarde.',

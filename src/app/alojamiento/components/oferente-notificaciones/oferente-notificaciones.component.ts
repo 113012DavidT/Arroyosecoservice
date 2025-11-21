@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NotificacionesService, NotificacionDto } from '../../services/notificaciones.service';
+import { first } from 'rxjs/operators';
 
 interface Notificacion {
   id: string;
@@ -50,13 +52,42 @@ interface Notificacion {
     .placeholder { background: #fff; padding: 3rem; border-radius: 12px; text-align: center; color: #6b7280; }
   `]
 })
-export class OferenteNotificacionesComponent {
-  notificaciones: Notificacion[] = [
-    { id: 'n1', titulo: 'Nueva reserva', mensaje: 'Has recibido una nueva solicitud de reserva.', fecha: '27/10/2025', leida: false },
-    { id: 'n2', titulo: 'Pago confirmado', mensaje: 'Se confirmó el pago de la reserva R-001.', fecha: '25/10/2025', leida: true }
-  ];
+export class OferenteNotificacionesComponent implements OnInit {
+  notificaciones: Notificacion[] = [];
+  loading = false;
+  error: string | null = null;
+
+  constructor(private notiService: NotificacionesService) {}
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  load() {
+    this.loading = true;
+    this.notiService.list(false).pipe(first()).subscribe({
+      next: (data: NotificacionDto[]) => {
+        this.notificaciones = (data || []).map(d => ({
+          id: String(d.id),
+          titulo: d.titulo || 'Notificación',
+          mensaje: d.mensaje,
+          fecha: d.fecha || new Date().toLocaleDateString(),
+          leida: !!d.leida
+        }));
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Error al cargar notificaciones';
+        this.loading = false;
+      }
+    });
+  }
 
   toggleLeida(n: Notificacion) {
-    n.leida = !n.leida;
+    const nuevoEstado = !n.leida;
+    this.notiService.marcarLeida(n.id, { mensaje: n.mensaje }).pipe(first()).subscribe({
+      next: () => n.leida = nuevoEstado,
+      error: () => this.error = 'Error al actualizar notificación'
+    });
   }
 }

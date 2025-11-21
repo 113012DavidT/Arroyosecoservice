@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FavoritesService, FavoriteAlojamiento } from '../../../shared/services/favorites.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
+import { first } from 'rxjs/operators';
 
 interface Alojamiento {
   id: number;
@@ -21,40 +23,45 @@ interface Alojamiento {
   templateUrl: './lista-alojamientos.component.html',
   styleUrl: './lista-alojamientos.component.scss'
 })
-export class ListaAlojamientosComponent {
+export class ListaAlojamientosComponent implements OnInit {
   search = '';
   sortMode: 'precio' | 'rating' | 'nombre' = 'precio';
+  alojamientos: Alojamiento[] = [];
+  loading = false;
+  error: string | null = null;
 
-  alojamientos: Alojamiento[] = [
-    {
-      id: 1,
-      nombre: 'Cabaña Sierra Verde',
-      ubicacion: 'Arroyo Seco, Qro.',
-      precioNoche: 950,
-      rating: 4.7,
-      imagen: 'https://images.unsplash.com/photo-1505691723518-36a5ac3b2d87?auto=format&fit=crop&w=900&q=60'
-    },
-    {
-      id: 2,
-      nombre: 'Posada La Cascada',
-      ubicacion: 'San Juan de los Durán',
-      precioNoche: 780,
-      rating: 4.4,
-      imagen: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=60'
-    },
-    {
-      id: 3,
-      nombre: 'Casa del Río',
-      ubicacion: 'Concá',
-      precioNoche: 1200,
-      rating: 4.9,
-      imagen: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=900&q=60'
-    }
-  ];
+  constructor(private favs: FavoritesService,
+              private toast: ToastService,
+              private alojamientosService: AlojamientoService) {}
 
-  constructor(private favs: FavoritesService, private toast: ToastService) {}
+  ngOnInit(): void {
+    this.fetchAlojamientos();
+  }
+
+  private fetchAlojamientos() {
+    this.loading = true;
+    this.error = null;
+    this.alojamientosService.listAll().pipe(first()).subscribe({
+      next: (data: AlojamientoDto[]) => {
+        this.alojamientos = (data || []).map(d => ({
+          id: d.id!,
+            nombre: d.nombre,
+            ubicacion: d.ubicacion,
+            precioNoche: d.precioPorNoche,
+            rating: 0, // Backend aún no provee rating
+            imagen: d.fotoPrincipal || 'assets/images/hero-oferentes.svg'
+        }));
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Error al cargar alojamientos';
+        this.loading = false;
+      }
+    });
+  }
 
   get filtered(): Alojamiento[] {
+    if (this.loading || this.error) return this.alojamientos; // evitar operaciones si hay estado especial
     let result = this.alojamientos.filter(a =>
       a.nombre.toLowerCase().includes(this.search.toLowerCase()) ||
       a.ubicacion.toLowerCase().includes(this.search.toLowerCase())

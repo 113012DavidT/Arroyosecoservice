@@ -11,10 +11,17 @@
         placeholder="Buscar por folio, huésped o hospedaje"
         [(ngModel)]="searchTerm"
       />
+      <select [(ngModel)]="estadoFiltro">
+        <option value="">-- Estado --</option>
+        <option *ngFor="let e of estadosPosibles" [value]="e">{{ e }}</option>
+      </select>
     </div>
   </header>
 
-  <div class="table-wrapper" *ngIf="filteredReservas.length; else emptyState">
+  <div *ngIf="loading" class="loading">Cargando reservas...</div>
+  <div *ngIf="!loading && error" class="error">{{ error }}</div>
+
+  <div class="table-wrapper" *ngIf="!loading && !error && filteredReservas.length; else emptyState">
     <table>
       <thead>
         <tr>
@@ -30,15 +37,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let reserva of filteredReservas">
-          <td>{{ reserva.id }}</td>
+          <td>{{ reserva.folio || reserva.id }}</td>
           <td>{{ reserva.hospedaje }}</td>
           <td>{{ reserva.huesped }}</td>
           <td>{{ reserva.fechaEntrada }}</td>
           <td>{{ reserva.fechaSalida }}</td>
           <td>${{ reserva.total.toLocaleString() }} MXN</td>
           <td>
-            <span 
-              class="pill" 
+            <span
+              class="pill"
               [ngClass]="reserva.estado.toLowerCase()"
             >
               {{ reserva.estado }}
@@ -46,8 +53,8 @@
           </td>
           <td class="actions">
             <button type="button" class="btn ghost" (click)="abrirDetalle(reserva)">Ver detalle</button>
-            <button type="button" class="btn success" *ngIf="reserva.estado === 'Pendiente'" (click)="confirmar(reserva)">Confirmar</button>
-            <button type="button" class="btn danger" *ngIf="reserva.estado === 'Pendiente'" (click)="rechazar(reserva)">Rechazar</button>
+            <button type="button" class="btn success" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="confirmar(reserva)">Confirmar</button>
+            <button type="button" class="btn danger" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="rechazar(reserva)">Rechazar</button>
           </td>
         </tr>
       </tbody>
@@ -75,6 +82,16 @@
         <div><strong>Salida:</strong> {{ r.fechaSalida }}</div>
         <div><strong>Total:</strong> ${{ r.total.toLocaleString() }} MXN</div>
         <div><strong>Estado:</strong> {{ r.estado }}</div>
+      </div>
+
+      <div class="comprobante" *ngIf="r.comprobanteUrl">
+        <strong>Comprobante:</strong>
+        <ng-container *ngIf="r.comprobanteUrl.endsWith('.pdf'); else imgComp">
+          <a [href]="r.comprobanteUrl" target="_blank" rel="noopener">Ver PDF</a>
+        </ng-container>
+        <ng-template #imgComp>
+          <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
+        </ng-template>
       </div>
     </div>
     <div class="modal__footer">

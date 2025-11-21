@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
+import { first } from 'rxjs/operators';
 
 interface Hospedaje {
   id: string;
@@ -23,35 +25,43 @@ interface Hospedaje {
   templateUrl: './gestion-hospedajes.component.html',
   styleUrl: './gestion-hospedajes.component.scss'
 })
-export class GestionHospedajesComponent {
+export class GestionHospedajesComponent implements OnInit {
   private toastService = inject(ToastService);
+  private alojamientosService = inject(AlojamientoService);
 
   searchTerm = '';
 
-  hospedajes: Hospedaje[] = [
-    {
-      id: '1',
-      nombre: 'CABAÑA LUXURY WOOD',
-      ubicacion: 'Zona Barranca de la Virgen, Arroyo Seco, Querétaro',
-      huespedes: 4,
-      habitaciones: 2,
-      banos: 2,
-      precio: 1350,
-      estado: 'Reservado',
-      imagen: 'assets/images/hero-oferentes.svg'
-    },
-    {
-      id: '2',
-      nombre: 'CABAÑA LUXURY WOOD',
-      ubicacion: 'Zona Barranca de la Virgen, Arroyo Seco, Querétaro',
-      huespedes: 4,
-      habitaciones: 2,
-      banos: 2,
-      precio: 1350,
-      estado: 'Pendiente de pago',
-      imagen: 'assets/images/hero-oferentes.svg'
-    }
-  ];
+  hospedajes: Hospedaje[] = [];
+  loading = false;
+  error: string | null = null;
+
+  ngOnInit(): void {
+    this.cargarHospedajes();
+  }
+
+  private cargarHospedajes() {
+    this.loading = true;
+    this.alojamientosService.listMine().pipe(first()).subscribe({
+      next: (data: AlojamientoDto[]) => {
+        this.hospedajes = (data || []).map(d => ({
+          id: String(d.id),
+          nombre: d.nombre,
+          ubicacion: d.ubicacion,
+          huespedes: d.maxHuespedes,
+          habitaciones: d.habitaciones,
+          banos: d.banos,
+          precio: d.precioPorNoche,
+          estado: 'Confirmado', // Suponemos estado generico, backend no provee
+          imagen: d.fotoPrincipal || 'assets/images/hero-oferentes.svg'
+        }));
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar tus hospedajes';
+        this.loading = false;
+      }
+    });
+  }
 
   get filteredHospedajes(): Hospedaje[] {
     const term = this.searchTerm.trim().toLowerCase();
@@ -68,11 +78,14 @@ export class GestionHospedajesComponent {
   eliminar(hospedaje: Hospedaje) {
     const confirmacion = confirm(`¿Estás seguro de eliminar "${hospedaje.nombre}"?`);
     if (confirmacion) {
-      const index = this.hospedajes.findIndex(h => h.id === hospedaje.id);
-      if (index > -1) {
-        this.hospedajes.splice(index, 1);
-        this.toastService.success(`Hospedaje "${hospedaje.nombre}" eliminado`);
-      }
+      // Backend delete
+      this.alojamientosService.delete(Number(hospedaje.id)).pipe(first()).subscribe({
+        next: () => {
+          this.hospedajes = this.hospedajes.filter(h => h.id !== hospedaje.id);
+          this.toastService.success(`Hospedaje "${hospedaje.nombre}" eliminado`);
+        },
+        error: () => this.toastService.error('No se pudo eliminar hospedaje')
+      });
     }
   }
 }

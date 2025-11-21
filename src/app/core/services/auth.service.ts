@@ -1,9 +1,95 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ApiService } from './api.service';
+import { Observable, tap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  role?: string;
+}
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly api = inject(ApiService);
+
+  private readonly tokenKey = 'as_token';
 
   constructor() { }
+
+  private saveToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  logout() {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  // --- Roles & user info helpers from JWT ---
+  private decodeJwt(token: string): any | null {
+    try {
+      const payload = token.split('.')[1];
+      const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decodeURIComponent(escape(json)));
+    } catch {
+      try {
+        // Fallback without unicode handling
+        return JSON.parse(atob(token.split('.')[1]));
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  getRoles(): string[] {
+    const token = this.getToken();
+    if (!token) return [];
+    const payload = this.decodeJwt(token);
+    if (!payload) return [];
+    const roleClaimKeys = [
+      'role',
+      'roles',
+      'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+    ];
+    for (const key of roleClaimKeys) {
+      const value = payload[key];
+      if (!value) continue;
+      if (Array.isArray(value)) return value.map((v: any) => String(v));
+      return [String(value)];
+    }
+    return [];
+  }
+
+  isAdmin(): boolean {
+    return this.getRoles().some(r => /admin/i.test(r));
+  }
+
+  login(payload: LoginPayload): Observable<any> {
+    return this.api.post<any>('/Auth/login', payload).pipe(
+      tap(res => {
+        const token = res?.token || res?.accessToken || res?.jwt;
+        if (token) this.saveToken(token);
+      })
+    );
+  }
+
+  register(payload: RegisterPayload): Observable<any> {
+    return this.api.post<any>('/Auth/register', payload);
+  }
+
+  me(): Observable<any> {
+    return this.api.get<any>('/Auth/me');
+  }
 }

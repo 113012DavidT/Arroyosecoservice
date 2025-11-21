@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { first } from 'rxjs/operators';
 
 interface LoginModel {
   email: string;
@@ -21,13 +23,15 @@ export class AdminLoginComponent {
     password: ''
   };
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router, private auth: AuthService) {}
 
   onSubmit(form: NgForm): void {
     if (form.invalid) {
       return;
     }
-
-    this.router.navigateByUrl('/admin/dashboard');
+    this.auth.login({ email: this.loginModel.email, password: this.loginModel.password }).pipe(first()).subscribe({
+      next: () => this.router.navigateByUrl('/admin/dashboard'),
+      error: () => alert('No se pudo iniciar sesión como administrador')
+    });
   }
 }

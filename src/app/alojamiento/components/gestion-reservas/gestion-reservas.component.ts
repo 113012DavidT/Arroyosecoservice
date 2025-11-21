@@ -1,17 +1,27 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ReservasService, ReservaDto } from '../../services/reservas.service';
+import { first } from 'rxjs/operators';
+import { AlojamientoService } from '../../services/alojamiento.service';
+import { forkJoin, of } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import { UserService } from '../../../core/services/user.service';
+import { ApiService } from '../../../core/services/api.service';
 
-interface Reserva {
-  id: string;
+interface ReservaUI {
+  id: number;
+  folio?: string;
   hospedaje: string;
   huesped: string;
   fechaEntrada: string;
   fechaSalida: string;
   total: number;
-  estado: 'Confirmada' | 'Pendiente' | 'Cancelada';
+  estado: 'Confirmada' | 'Pendiente' | 'PagoEnRevision' | 'Cancelada' | 'Rechazada';
+  alojamientoId?: number;
+  comprobanteUrl?: string;
 }
 
 @Component({
@@ -21,59 +31,157 @@ interface Reserva {
   templateUrl: './gestion-reservas.component.html',
   styleUrl: './gestion-reservas.component.scss'
 })
-export class GestionReservasComponent {
+export class GestionReservasComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private reservasService = inject(ReservasService);
+  private alojamientosService = inject(AlojamientoService);
+  private userService = inject(UserService);
+  private api = inject(ApiService);
 
   searchTerm = '';
   hospedajeFiltro: string | null = null;
+  estadoFiltro: string = '';
+  readonly estadosPosibles: string[] = ['Pendiente','PagoEnRevision','Confirmada','Rechazada','Cancelada'];
   detalleAbierto = false;
-  reservaSeleccionada: Reserva | null = null;
+  reservaSeleccionada: ReservaUI | null = null;
 
-  reservas: Reserva[] = [
-    {
-      id: 'R-001',
-      hospedaje: '1',
-      huesped: 'Manuel Puig',
-      fechaEntrada: '24-12-2025',
-      fechaSalida: '28-12-2025',
-      total: 5400,
-      estado: 'Confirmada'
-    },
-    {
-      id: 'R-002',
-      hospedaje: '2',
-      huesped: 'Ana García',
-      fechaEntrada: '30-12-2025',
-      fechaSalida: '02-01-2026',
-      total: 4050,
-      estado: 'Pendiente'
-    }
-  ];
+  reservas: ReservaUI[] = [];
+  loading = false;
+  error: string | null = null;
 
   constructor() {
     this.hospedajeFiltro = this.route.snapshot.paramMap.get('id');
   }
 
-  get filteredReservas(): Reserva[] {
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  private cargar() {
+    this.loading = true;
+    this.error = null;
+    const alojamientoId = this.hospedajeFiltro ? parseInt(this.hospedajeFiltro, 10) : undefined;
+    if (alojamientoId) {
+      this.reservasService.listByAlojamiento(alojamientoId).pipe(first()).subscribe({
+        next: (items: ReservaDto[]) => {
+          this.reservas = (items || []).map(this.mapDtoToUI);
+          this.loading = false;
+          this.cargarClientes();
+        },
+        error: () => {
+          this.error = 'No se pudieron cargar las reservas';
+          this.loading = false;
+        }
+      });
+    } else {
+      // Agrega todas las reservas de todos los alojamientos del oferente
+      this.alojamientosService.listMine().pipe(
+        switchMap(list => {
+          const ids = (list || []).map(a => a.id).filter(Boolean) as number[];
+          if (!ids.length) return of([] as ReservaDto[]);
+          return forkJoin(ids.map(id => this.reservasService.listByAlojamiento(id))).pipe(
+            map(arrays => arrays.flat())
+          );
+        }),
+        first(),
+        catchError(() => {
+          this.error = 'No se pudieron cargar las reservas';
+          this.loading = false;
+          return of([] as ReservaDto[]);
+        })
+      ).subscribe((items: ReservaDto[]) => {
+        this.reservas = (items || []).map(this.mapDtoToUI);
+        this.loading = false;
+        this.cargarClientes();
+      });
+    }
+  }
+
+  private cargarClientes() {
+    const ids = Array.from(new Set(this.reservas.map(r => (r as any)['clienteId']).filter(Boolean)));
+    if (!ids.length) return;
+    forkJoin(ids.map(id => this.userService.getCliente(id))).pipe(first()).subscribe({
+      next: clientes => {
+        const mapa = new Map<string, string>();
+        clientes.forEach(c => {
+          const nombre = c.nombre || c.nombreCompleto || c.email || '(Sin nombre)';
+          if (c.id) mapa.set(c.id, nombre);
+        });
+        this.reservas = this.reservas.map(r => {
+          const clienteId = (r as any)['clienteId'];
+          return clienteId && mapa.has(clienteId) ? { ...r, huesped: mapa.get(clienteId)! } : r;
+        });
+      },
+      error: () => {
+        // Silencioso: si falla mantenemos email o placeholder
+      }
+    });
+  }
+
+  private mapDtoToUI = (r: ReservaDto): ReservaUI => {
+    const id = (typeof r.id === 'string') ? parseInt(r.id as string, 10) : (r.id as number) || 0;
+    const hospedaje = (r.hospedaje || r.alojamientoNombre || r['alojamiento'] || '');
+    const huesped = (r.huesped || r.clienteNombre || r.usuarioEmail || '');
+    const total = (typeof r.total === 'number') ? r.total : Number(r['montoTotal'] || 0);
+    const estadoRaw = (r.estado || '').toLowerCase();
+    // Normaliza estados más comunes provenientes del backend, incluyendo PagoEnRevision
+    const estado: ReservaUI['estado'] = estadoRaw.includes('pago') ? 'PagoEnRevision'
+      : estadoRaw.includes('pend') ? 'Pendiente'
+      : estadoRaw.includes('confirm') || estadoRaw.includes('acept') ? 'Confirmada'
+      : estadoRaw.includes('rechaz') ? 'Rechazada'
+      : 'Cancelada';
+    let comprobanteUrl = (r as any).comprobanteUrl || (r as any).ComprobanteUrl || '';
+    // Si el backend devuelve una ruta relativa como "/comprobantes/xxx",
+    // convertirla a una URL absoluta usando la raíz del API (quitando '/api').
+    if (comprobanteUrl && !/^https?:\/\//i.test(comprobanteUrl)) {
+      if (!comprobanteUrl.startsWith('/')) comprobanteUrl = '/' + comprobanteUrl;
+      const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
+      comprobanteUrl = `${apiRoot}${comprobanteUrl}`;
+    }
+    return {
+      id,
+      folio: r.folio,
+      hospedaje,
+      huesped,
+      fechaEntrada: r.fechaEntrada || r['checkIn'] || '',
+      fechaSalida: r.fechaSalida || r['checkOut'] || '',
+      total,
+      estado,
+      alojamientoId: r.alojamientoId,
+      comprobanteUrl: comprobanteUrl || undefined
+    };
+  }
+
+  get filteredReservas(): ReservaUI[] {
     let list = this.reservas;
 
     if (this.hospedajeFiltro) {
-      list = list.filter(r => r.hospedaje === this.hospedajeFiltro);
+      const id = parseInt(this.hospedajeFiltro, 10);
+      list = list.filter(r => r.alojamientoId === id || `${r.hospedaje}` === this.hospedajeFiltro);
     }
 
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) {
+      // Aplica filtro por estado si se seleccionó
+      if (this.estadoFiltro) {
+        list = list.filter(r => r.estado === this.estadoFiltro);
+      }
       return list;
     }
 
-    return list.filter((r) =>
-      [r.id, r.huesped, r.estado]
-        .some((value) => value.toLowerCase().includes(term))
+    list = list.filter((r) =>
+      [r.folio || r.id, r.huesped, r.estado]
+        .some((value) => String(value).toLowerCase().includes(term))
     );
+
+    if (this.estadoFiltro) {
+      list = list.filter(r => r.estado === this.estadoFiltro);
+    }
+    return list;
   }
 
-  abrirDetalle(reserva: Reserva) {
+  abrirDetalle(reserva: ReservaUI) {
     this.reservaSeleccionada = { ...reserva };
     this.detalleAbierto = true;
   }
@@ -83,13 +191,28 @@ export class GestionReservasComponent {
     this.reservaSeleccionada = null;
   }
 
-  confirmar(reserva: Reserva) {
-    reserva.estado = 'Confirmada';
-    this.toastService.success(`Reserva ${reserva.id} confirmada exitosamente`);
+  confirmar(reserva: ReservaUI) {
+    this.reservasService.aceptar(reserva.id).pipe(first()).subscribe({
+      next: () => {
+        this.toastService.success(`Reserva ${reserva.folio || reserva.id} confirmada exitosamente`);
+        this.actualizarEstadoLocal(reserva.id, 'Confirmada');
+      },
+      error: () => this.toastService.error('No se pudo confirmar la reserva')
+    });
   }
 
-  rechazar(reserva: Reserva) {
-    reserva.estado = 'Cancelada';
-    this.toastService.error(`Reserva ${reserva.id} rechazada`);
+  rechazar(reserva: ReservaUI) {
+    this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
+      next: () => {
+        this.toastService.info(`Reserva ${reserva.folio || reserva.id} rechazada`);
+        this.actualizarEstadoLocal(reserva.id, 'Rechazada');
+      },
+      error: () => this.toastService.error('No se pudo rechazar la reserva')
+    });
+  }
+
+  private actualizarEstadoLocal(id: number, estado: ReservaUI['estado']) {
+    const idx = this.reservas.findIndex(r => r.id === id);
+    if (idx >= 0) this.reservas[idx] = { ...this.reservas[idx], estado };
   }
 }

@@ -1,17 +1,33 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ApiService } from '../../core/services/api.service';
+import { Observable } from 'rxjs';
 
 export interface RegistroOferentePayload {
-  nombre: string;
+  id?: number;
+  nombreSolicitante: string;
   telefono: string;
-  contexto: string;
+  nombreNegocio?: string;
+  correo?: string;
+  mensaje?: string;
+  estatus?: string;
+  fechaSolicitud?: string;
+  fechaRespuesta?: string;
+  adminId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class RegistroOferenteService {
-  // Placeholder for future HTTP integration
-  submitSolicitud(payload: RegistroOferentePayload) {
-    // In future: return this.http.post('/api/oferentes/solicitudes', payload)
-    console.debug('[RegistroOferenteService] Solicitud mock enviada', payload);
-    return Promise.resolve({ ok: true });
+  private readonly api = inject(ApiService);
+
+  submitSolicitud(payload: RegistroOferentePayload): Observable<any> {
+    return this.api.post('/SolicitudesOferente', payload);
+  }
+
+  list(): Observable<any[]> {
+    return this.api.get<any[]>('/SolicitudesOferente');
+  }
+
+  getById(id: number): Observable<any> {
+    return this.api.get<any>(`/SolicitudesOferente/${id}`);
   }
 }

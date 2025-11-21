@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NotificacionesService, NotificacionDto } from '../../services/notificaciones.service';
+import { first } from 'rxjs/operators';
 
 interface Notificacion {
   nombre: string;
@@ -16,26 +18,40 @@ interface Notificacion {
   templateUrl: './admin-notificaciones.component.html',
   styleUrl: './admin-notificaciones.component.scss'
 })
-export class AdminNotificacionesComponent {
+export class AdminNotificacionesComponent implements OnInit {
   searchTerm = '';
+  notificaciones: Notificacion[] = [];
+  loading = false;
+  error: string | null = null;
 
-  readonly notificaciones: Notificacion[] = [
-    { nombre: 'Sofia Arredondo Ortiz', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' },
-    { nombre: 'Emmanuel Zuñiga', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' },
-    { nombre: 'Bryan Axel Cortes Cortes', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' },
-    { nombre: 'Diego Ivan Prieto Puga', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' },
-    { nombre: 'Giovanni Jair Jaimes Herrera', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' },
-    { nombre: 'Manuel Salvador Mendoza Chavez', telefono: '4424735521', negocio: 'Airbnb', estatus: 'Abierta' }
-  ];
+  constructor(private notiService: NotificacionesService) {}
+
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  cargar() {
+    this.loading = true;
+    this.notiService.list(false).pipe(first()).subscribe({
+      next: (data: NotificacionDto[]) => {
+        this.notificaciones = (data || []).map(d => ({
+          nombre: d.titulo || 'Solicitud',
+          telefono: '',
+          negocio: '',
+          estatus: d.leida ? 'Atendida' : 'Abierta'
+        }));
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Error al cargar notificaciones';
+        this.loading = false;
+      }
+    });
+  }
 
   get filteredNotificaciones(): Notificacion[] {
     const term = this.searchTerm.trim().toLowerCase();
-    if (!term) {
-      return this.notificaciones;
-    }
-    return this.notificaciones.filter((item) =>
-      [item.nombre, item.telefono, item.negocio]
-        .some((value) => value.toLowerCase().includes(term))
-    );
+    if (!term) return this.notificaciones;
+    return this.notificaciones.filter(item => [item.nombre, item.telefono, item.negocio].some(v => v.toLowerCase().includes(term)));
   }
 }
