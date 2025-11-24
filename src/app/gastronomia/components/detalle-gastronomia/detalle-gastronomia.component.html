@@ -8,10 +8,33 @@
       <h1>{{ establecimiento.nombre }}</h1>
       <p class="ubicacion">📍 {{ establecimiento.ubicacion }}</p>
       <p class="descripcion">{{ establecimiento.descripcion }}</p>
-      <button class="btn-reservar" (click)="toggleReservaForm()">
-        {{ showReservaForm ? 'Cancelar' : 'Reservar Mesa' }}
-      </button>
     </div>
+  </div>
+
+  <!-- Menús -->
+  <div class="menus-section" *ngIf="menus.length > 0">
+    <h2>Nuestro Menú</h2>
+    <div class="menus">
+      <div class="menu" *ngFor="let menu of menus">
+        <h3>{{ menu.nombre }}</h3>
+        <div class="items" *ngIf="menu.items && menu.items.length > 0">
+          <div class="item" *ngFor="let item of menu.items">
+            <div class="item-info">
+              <h4>{{ item.nombre }}</h4>
+              <p>{{ item.descripcion }}</p>
+            </div>
+            <span class="precio">${{ item.precio }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón de reserva -->
+  <div class="reserva-section">
+    <button class="btn-reservar" (click)="toggleReservaForm()">
+      {{ showReservaForm ? 'Cancelar Reserva' : 'Reservar Mesa' }}
+    </button>
   </div>
 
   <!-- Formulario de reserva -->
@@ -37,25 +60,6 @@
     <button class="btn-confirmar" (click)="crearReserva()" [disabled]="submitting">
       {{ submitting ? 'Procesando...' : 'Confirmar Reserva' }}
     </button>
-  </div>
-
-  <!-- Menús -->
-  <div class="menus-section" *ngIf="menus.length > 0">
-    <h2>Nuestro Menú</h2>
-    <div class="menus">
-      <div class="menu" *ngFor="let menu of menus">
-        <h3>{{ menu.nombre }}</h3>
-        <div class="items" *ngIf="menu.items && menu.items.length > 0">
-          <div class="item" *ngFor="let item of menu.items">
-            <div class="item-info">
-              <h4>{{ item.nombre }}</h4>
-              <p>{{ item.descripcion }}</p>
-            </div>
-            <span class="precio">${{ item.precio }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <a routerLink="/cliente/gastronomia" class="btn-back">← Volver a la lista</a>
