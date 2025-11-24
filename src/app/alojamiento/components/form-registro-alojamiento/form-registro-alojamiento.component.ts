@@ -93,6 +93,10 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     script.async = true;
     script.defer = true;
     script.onload = () => this.initAutocomplete();
+    script.onerror = () => {
+      console.warn('Google Maps no se pudo cargar, continuando sin autocompletado');
+      this.toastService.error('Autocompletado no disponible, ingresa la ubicación manualmente');
+    };
     document.head.appendChild(script);
   }
   
@@ -146,9 +150,9 @@ export class FormRegistroAlojamientoComponent implements OnInit {
   onSubmit(form: NgForm) {
     if (form.invalid) return;
     
+    // Las coordenadas son opcionales
     if (!this.formModel.latitud || !this.formModel.longitud) {
-      this.toastService.error('Por favor selecciona una dirección del buscador');
-      return;
+      console.warn('Sin coordenadas GPS, guardando solo con ubicación de texto');
     }
     
     const payload: AlojamientoDto = {

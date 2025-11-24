@@ -32,8 +32,10 @@ export class GestionEstablecimientosComponent implements OnInit {
         this.establecimientos = data || [];
         this.loading = false;
       },
-      error: () => {
-        this.toast.error('Error al cargar establecimientos');
+      error: (err) => {
+        console.error('Error al cargar establecimientos:', err);
+        this.toast.error('Error al cargar establecimientos. Por favor verifica que el backend esté funcionando.');
+        this.establecimientos = [];
         this.loading = false;
       }
     });

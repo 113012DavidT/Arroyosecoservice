@@ -23,10 +23,10 @@
         required
         placeholder="Escribe y selecciona del autocompletado..." />
       <div class="hint success" *ngIf="establecimiento.latitud && establecimiento.longitud">
-        ✓ Coordenadas capturadas: {{ establecimiento.latitud }}, {{ establecimiento.longitud }}
+        ✓ Coordenadas GPS capturadas: {{ establecimiento.latitud }}, {{ establecimiento.longitud }}
       </div>
-      <div class="hint warning" *ngIf="establecimiento.ubicacion && (!establecimiento.latitud || !establecimiento.longitud)">
-        ⚠ Selecciona una opción del autocompletado para capturar coordenadas
+      <div class="hint info" *ngIf="establecimiento.ubicacion && (!establecimiento.latitud || !establecimiento.longitud)">
+        ⓘ Puedes guardar sin coordenadas GPS o seleccionar del autocompletado para activar "Cómo llegar"
       </div>
     </div>
 

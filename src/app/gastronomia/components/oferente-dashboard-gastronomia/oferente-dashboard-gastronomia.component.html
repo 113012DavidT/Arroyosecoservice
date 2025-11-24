@@ -64,4 +64,11 @@
       </div>
     </div>
   </div>
+
+  <div class="empty-state" *ngIf="!loading && establecimientos.length === 0">
+    <p>No tienes restaurantes registrados aún.</p>
+    <a routerLink="/oferente/gastronomia/establecimientos/agregar" class="btn-primary">
+      ➕ Registrar primer restaurante
+    </a>
+  </div>
 </div>

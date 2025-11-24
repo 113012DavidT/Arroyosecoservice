@@ -36,7 +36,9 @@ export class OferenteDashboardGastronomiaComponent implements OnInit {
         this.establecimientos = data || [];
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al cargar establecimientos:', err);
+        this.establecimientos = [];
         this.loading = false;
       }
     });

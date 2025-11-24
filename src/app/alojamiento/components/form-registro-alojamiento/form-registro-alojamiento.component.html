@@ -20,11 +20,11 @@
         placeholder="Escribe la dirección (ej: Calle Principal 123, Arroyo Seco, Querétaro)"
         required 
       />
-      <small class="hint" *ngIf="formModel.latitud && formModel.longitud">
-        ✅ Ubicación capturada: {{ formModel.latitud?.toFixed(6) }}, {{ formModel.longitud?.toFixed(6) }}
+      <small class="hint success" *ngIf="formModel.latitud && formModel.longitud">
+        ✅ GPS activado: {{ formModel.latitud?.toFixed(6) }}, {{ formModel.longitud?.toFixed(6) }} - El botón "Cómo llegar" estará disponible
       </small>
-      <small class="hint warning" *ngIf="!formModel.latitud || !formModel.longitud">
-        ⚠️ Selecciona una dirección de las sugerencias para capturar las coordenadas
+      <small class="hint info" *ngIf="!formModel.latitud || !formModel.longitud">
+        ℹ️ Opcional: Selecciona del autocompletado para habilitar navegación GPS (botón "Cómo llegar")
       </small>
     </label>
 

@@ -52,6 +52,10 @@ export class FormEstablecimientoComponent implements OnInit {
     script.async = true;
     script.defer = true;
     script.onload = () => this.initAutocomplete();
+    script.onerror = () => {
+      console.warn('Google Maps no se pudo cargar, continuando sin autocompletado');
+      this.toast.error('Autocompletado no disponible, ingresa la ubicación manualmente');
+    };
     document.head.appendChild(script);
   }
 
@@ -92,9 +96,9 @@ export class FormEstablecimientoComponent implements OnInit {
       return;
     }
 
+    // Las coordenadas son opcionales ahora
     if (!this.establecimiento.latitud || !this.establecimiento.longitud) {
-      this.toast.error('Por favor selecciona una dirección del autocompletado para capturar las coordenadas');
-      return;
+      console.warn('Sin coordenadas, guardando solo con ubicación de texto');
     }
 
     this.submitting = true;
