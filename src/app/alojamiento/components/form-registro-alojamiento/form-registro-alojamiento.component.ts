@@ -85,10 +85,16 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     return this.idEdicion ? 'Editar Alojamiento' : 'Agregar Alojamiento';
   }
 
-  onLocationSelected(coords: { lat: number; lng: number }) {
-    this.formModel.latitud = coords.lat;
-    this.formModel.longitud = coords.lng;
-    this.toastService.success('📍 Ubicación marcada en el mapa');
+  onLocationSelected(data: { lat: number; lng: number; address?: string }) {
+    this.formModel.latitud = data.lat;
+    this.formModel.longitud = data.lng;
+    if (data.address) {
+      this.formModel.direccion = data.address;
+      this.formModel.ubicacion = data.address;
+      this.toastService.success(`📍 ${data.address}`);
+    } else {
+      this.toastService.success('📍 Ubicación marcada en el mapa');
+    }
   }
 
   agregarFoto(url: string) {

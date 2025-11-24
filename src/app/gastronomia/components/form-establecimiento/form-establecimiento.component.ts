@@ -81,9 +81,15 @@ export class FormEstablecimientoComponent implements OnInit {
     });
   }
 
-  onLocationSelected(coords: { lat: number; lng: number }) {
-    this.establecimiento.latitud = coords.lat;
-    this.establecimiento.longitud = coords.lng;
-    this.toast.success('📍 Ubicación marcada en el mapa');
+  onLocationSelected(data: { lat: number; lng: number; address?: string }) {
+    this.establecimiento.latitud = data.lat;
+    this.establecimiento.longitud = data.lng;
+    if (data.address) {
+      this.establecimiento.direccion = data.address;
+      this.establecimiento.ubicacion = data.address;
+      this.toast.success(`📍 ${data.address}`);
+    } else {
+      this.toast.success('📍 Ubicación marcada en el mapa');
+    }
   }
 }
