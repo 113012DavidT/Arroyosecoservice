@@ -120,7 +120,7 @@ export class AdminOferentesComponent {
     if (form.invalid) return;
     const payload = {
       email: this.nuevo.correo!,
-      password: 'Hola.123',
+      password: 'Temporal.123',
       nombre: this.nuevo.nombre!,
       telefono: this.nuevo.telefono!,
       role: 'Oferente',

@@ -136,7 +136,7 @@ export class AdminOferentesGastronomiaComponent implements OnInit {
     if (form.invalid) return;
     const payload = {
       email: this.nuevo.correo!,
-      password: 'Hola.123',
+      password: 'Temporal.123',
       nombre: this.nuevo.nombre!,
       telefono: this.nuevo.telefono!,
       role: 'Oferente',
@@ -146,7 +146,7 @@ export class AdminOferentesGastronomiaComponent implements OnInit {
     this.adminService.createUsuarioOferente(payload).pipe(first()).subscribe({
       next: (response) => {
         console.log('✅ Oferente creado exitosamente:', response);
-        console.log('🔑 Credenciales: email=' + payload.email + ', password=Hola.123');
+        console.log('🔑 Credenciales: email=' + payload.email + ', password=Temporal.123');
         this.toastService.success(`Oferente ${this.nuevo.nombre} registrado exitosamente`);
         this.cerrarRegistro();
         this.loadOferentes();
