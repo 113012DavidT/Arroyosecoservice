@@ -5,14 +5,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
-import { GOOGLE_MAPS_CONFIG } from '../../../config/maps.config';
-
-declare const google: any;
+import { MapPickerComponent } from '../../../shared/components/map-picker/map-picker.component';
 
 @Component({
   selector: 'app-form-establecimiento',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MapPickerComponent],
   templateUrl: './form-establecimiento.component.html',
   styleUrl: './form-establecimiento.component.scss'
 })
@@ -81,5 +79,11 @@ export class FormEstablecimientoComponent implements OnInit {
         this.submitting = false;
       }
     });
+  }
+
+  onLocationSelected(coords: { lat: number; lng: number }) {
+    this.establecimiento.latitud = coords.lat;
+    this.establecimiento.longitud = coords.lng;
+    this.toast.success('📍 Ubicación marcada en el mapa');
   }
 }

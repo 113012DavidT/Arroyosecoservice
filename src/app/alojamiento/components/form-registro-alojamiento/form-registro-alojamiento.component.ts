@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { first } from 'rxjs/operators';
-import { GOOGLE_MAPS_CONFIG } from '../../../config/maps.config';
+import { MapPickerComponent } from '../../../shared/components/map-picker/map-picker.component';
 
 interface AlojamientoForm {
   nombre: string;
@@ -23,7 +23,7 @@ interface AlojamientoForm {
 @Component({
   selector: 'app-form-registro-alojamiento',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MapPickerComponent],
   templateUrl: './form-registro-alojamiento.component.html',
   styleUrl: './form-registro-alojamiento.component.scss'
 })
@@ -135,6 +135,12 @@ export class FormRegistroAlojamientoComponent implements OnInit {
 
   get modoTitulo(): string {
     return this.idEdicion ? 'Editar Alojamiento' : 'Agregar Alojamiento';
+  }
+
+  onLocationSelected(coords: { lat: number; lng: number }) {
+    this.formModel.latitud = coords.lat;
+    this.formModel.longitud = coords.lng;
+    this.toastService.success('📍 Ubicación marcada en el mapa');
   }
 
   agregarFoto(url: string) {

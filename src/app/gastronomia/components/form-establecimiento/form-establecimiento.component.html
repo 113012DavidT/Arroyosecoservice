@@ -14,20 +14,23 @@
     </div>
 
     <div class="form-group">
-      <label for="autocomplete-input-gastro">Dirección completa *</label>
+      <label for="ubicacion">Ubicación *</label>
       <input 
         type="text" 
-        id="autocomplete-input-gastro" 
+        id="ubicacion" 
         [(ngModel)]="establecimiento.ubicacion" 
         name="ubicacion"
         required
-        placeholder="Escribe y selecciona del autocompletado..." />
-      <div class="hint success" *ngIf="establecimiento.latitud && establecimiento.longitud">
-        ✓ Coordenadas GPS capturadas: {{ establecimiento.latitud }}, {{ establecimiento.longitud }}
-      </div>
-      <div class="hint info" *ngIf="establecimiento.ubicacion && (!establecimiento.latitud || !establecimiento.longitud)">
-        ⓘ Puedes guardar sin coordenadas GPS o seleccionar del autocompletado para activar "Cómo llegar"
-      </div>
+        placeholder="Ej: Centro Histórico" />
+    </div>
+
+    <div class="form-group" style="grid-column: span 2;">
+      <label>📍 Marcar en el mapa (opcional pero recomendado)</label>
+      <app-map-picker 
+        [latitud]="establecimiento.latitud" 
+        [longitud]="establecimiento.longitud"
+        (locationSelected)="onLocationSelected($event)">
+      </app-map-picker>
     </div>
 
     <div class="form-group">

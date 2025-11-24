@@ -11,22 +11,24 @@
     </label>
 
     <label class="col-span-2">
-      📍 Buscar Dirección
+      📍 Ubicación (texto)
       <input 
-        id="autocomplete-input"
         type="text" 
-        name="busquedaDireccion" 
-        [(ngModel)]="busquedaDireccion"
-        placeholder="Escribe la dirección (ej: Calle Principal 123, Arroyo Seco, Querétaro)"
+        name="ubicacion" 
+        [(ngModel)]="formModel.ubicacion"
+        placeholder="Ej: Centro de Arroyo Seco, Querétaro"
         required 
       />
-      <small class="hint success" *ngIf="formModel.latitud && formModel.longitud">
-        ✅ GPS activado: {{ formModel.latitud?.toFixed(6) }}, {{ formModel.longitud?.toFixed(6) }} - El botón "Cómo llegar" estará disponible
-      </small>
-      <small class="hint info" *ngIf="!formModel.latitud || !formModel.longitud">
-        ℹ️ Opcional: Selecciona del autocompletado para habilitar navegación GPS (botón "Cómo llegar")
-      </small>
     </label>
+
+    <div class="col-span-2">
+      <label>📍 Marcar en el mapa (opcional pero recomendado)</label>
+      <app-map-picker 
+        [latitud]="formModel.latitud" 
+        [longitud]="formModel.longitud"
+        (locationSelected)="onLocationSelected($event)">
+      </app-map-picker>
+    </div>
 
     <label>
       Huéspedes
