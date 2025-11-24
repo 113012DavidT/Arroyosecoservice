@@ -23,6 +23,7 @@
 
 Como **Administrador**, crea un nuevo oferente:
 
+**Opción A - Admin crea oferente:**
 ```
 Email: prueba@oferente.com
 Contraseña: Hola.123
@@ -30,16 +31,23 @@ Rol: Oferente
 Tipo: Alojamiento o Gastronomía
 ```
 
-El backend automáticamente marca `RequiereCambioPassword = true` para este usuario.
+**Opción B - Registro automático de oferente:**
+```
+Email: autoregistro@oferente.com
+Contraseña: Temporal.123
+Rol: Oferente
+```
+
+El backend automáticamente marca `RequiereCambioPassword = true` para ambos casos.
 
 ---
 
 ### 2. Hacer Login como el Oferente
 
 1. Ve a: https://arroyosecoservices.vercel.app/oferente/login
-2. Ingresa las credenciales:
-   - **Email:** `prueba@oferente.com`
-   - **Password:** `Hola.123`
+2. Ingresa las credenciales según cómo fue creado:
+   - **Si fue creado por admin:** Email + `Hola.123`
+   - **Si fue auto-registro:** Email + `Temporal.123`
 3. Haz clic en **Iniciar Sesión**
 
 ---
@@ -61,7 +69,7 @@ El backend automáticamente marca `RequiereCambioPassword = true` para este usua
 
 En la pantalla `/cambiar-password`:
 
-1. **Contraseña Temporal Actual:** `Hola.123`
+1. **Contraseña Temporal Actual:** `Hola.123` o `Temporal.123` (según cómo fue creado)
 2. **Nueva Contraseña:** `MiPassword123!` (o cualquier otra segura)
 3. **Confirmar Nueva Contraseña:** `MiPassword123!`
 4. Haz clic en **Cambiar Contraseña**
@@ -144,7 +152,9 @@ RequiereCambioPassword: "False"
 
 **Causa:** Contraseña actual incorrecta
 
-**Solución:** Verifica que estés usando la contraseña temporal exacta (`Hola.123`)
+**Solución:** 
+- Si fue creado por admin, usa: `Hola.123`
+- Si fue auto-registro, usa: `Temporal.123`
 
 ---
 
@@ -180,7 +190,7 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "passwordActual": "Hola.123",
+  "passwordActual": "Hola.123",  // o "Temporal.123"
   "passwordNueva": "MiPassword123!"
 }
 ```
@@ -216,8 +226,8 @@ La pantalla de cambio de contraseña incluye:
 
 ## ✅ Checklist de Verificación
 
-- [ ] Admin puede crear oferentes
-- [ ] Oferente nuevo hace login con `Hola.123`
+- [ ] Admin puede crear oferentes (contraseña: `Hola.123`)
+- [ ] Oferente nuevo hace login con su contraseña temporal
 - [ ] Redirige automáticamente a `/cambiar-password`
 - [ ] No puede acceder a otras rutas
 - [ ] Puede cambiar contraseña exitosamente
