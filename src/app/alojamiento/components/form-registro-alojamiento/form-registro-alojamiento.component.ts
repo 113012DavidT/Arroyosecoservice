@@ -9,6 +9,9 @@ import { first } from 'rxjs/operators';
 interface AlojamientoForm {
   nombre: string;
   ubicacion: string;
+  latitud: number | null;
+  longitud: number | null;
+  direccion: string;
   huespedes: number;
   habitaciones: number;
   banos: number;
@@ -33,18 +36,27 @@ export class FormRegistroAlojamientoComponent implements OnInit {
   formModel: AlojamientoForm = {
     nombre: '',
     ubicacion: '',
+    latitud: null,
+    longitud: null,
+    direccion: '',
     huespedes: 1,
     habitaciones: 1,
     banos: 1,
     precio: 0,
     fotos: []
   };
+  
+  autocomplete: any;
+  busquedaDireccion = '';
 
   constructor() {
     this.idEdicion = this.route.snapshot.paramMap.get('id');
   }
 
   ngOnInit(): void {
+    // Cargar Google Maps API
+    this.loadGoogleMapsScript();
+    
     if (this.idEdicion) {
       const id = parseInt(this.idEdicion, 10);
       if (id) {
@@ -53,17 +65,69 @@ export class FormRegistroAlojamientoComponent implements OnInit {
             this.formModel = {
               nombre: a.nombre,
               ubicacion: a.ubicacion,
+              latitud: a.latitud || null,
+              longitud: a.longitud || null,
+              direccion: a.direccion || a.ubicacion,
               huespedes: a.maxHuespedes,
               habitaciones: a.habitaciones,
               banos: a.banos,
               precio: a.precioPorNoche,
               fotos: [a.fotoPrincipal, ...(a.fotosUrls || [])].filter(Boolean) as string[]
             };
+            this.busquedaDireccion = a.direccion || a.ubicacion;
           },
           error: () => this.toastService.error('No se pudo cargar el alojamiento')
         });
       }
     }
+  }
+  
+  loadGoogleMapsScript() {
+    if ((window as any).google) {
+      this.initAutocomplete();
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&libraries=places&language=es';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => this.initAutocomplete();
+    document.head.appendChild(script);
+  }
+  
+  initAutocomplete() {
+    setTimeout(() => {
+      const input = document.getElementById('autocomplete-input') as HTMLInputElement;
+      if (!input) return;
+      
+      const autocomplete = new (window as any).google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        componentRestrictions: { country: 'mx' }
+      });
+      
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        
+        if (place.geometry && place.geometry.location) {
+          this.formModel.latitud = place.geometry.location.lat();
+          this.formModel.longitud = place.geometry.location.lng();
+          this.formModel.direccion = place.formatted_address || '';
+          this.formModel.ubicacion = place.formatted_address || '';
+          this.busquedaDireccion = place.formatted_address || '';
+          
+          console.log('📍 Ubicación seleccionada:', {
+            direccion: this.formModel.direccion,
+            lat: this.formModel.latitud,
+            lng: this.formModel.longitud
+          });
+          
+          this.toastService.success('Ubicación capturada correctamente');
+        }
+      });
+      
+      this.autocomplete = autocomplete;
+    }, 500);
   }
 
   get modoTitulo(): string {
@@ -81,9 +145,18 @@ export class FormRegistroAlojamientoComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     if (form.invalid) return;
+    
+    if (!this.formModel.latitud || !this.formModel.longitud) {
+      this.toastService.error('Por favor selecciona una dirección del buscador');
+      return;
+    }
+    
     const payload: AlojamientoDto = {
       nombre: this.formModel.nombre,
       ubicacion: this.formModel.ubicacion,
+      latitud: this.formModel.latitud,
+      longitud: this.formModel.longitud,
+      direccion: this.formModel.direccion,
       maxHuespedes: this.formModel.huespedes,
       habitaciones: this.formModel.habitaciones,
       banos: this.formModel.banos,

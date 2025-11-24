@@ -6,6 +6,9 @@ export interface AlojamientoDto {
   id?: number;
   nombre: string;
   ubicacion: string;
+  latitud?: number | null;
+  longitud?: number | null;
+  direccion?: string;
   maxHuespedes: number;
   habitaciones: number;
   banos: number;

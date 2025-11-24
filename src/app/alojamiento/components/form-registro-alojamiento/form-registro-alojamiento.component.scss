@@ -19,6 +19,17 @@
 label { font-weight: 600; color: #374151; display: grid; gap: .5rem; }
 input { border: 1px solid #d1d5db; border-radius: 10px; padding: .75rem 1rem; }
 
+.hint {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #10b981;
+  margin-top: -0.25rem;
+  
+  &.warning {
+    color: #f59e0b;
+  }
+}
+
 .fotos { display: flex; gap: .5rem; }
 
 .galeria { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; }

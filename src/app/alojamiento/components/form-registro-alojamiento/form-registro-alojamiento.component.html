@@ -11,8 +11,21 @@
     </label>
 
     <label class="col-span-2">
-      Ubicación
-      <input type="text" name="ubicacion" [(ngModel)]="formModel.ubicacion" required />
+      📍 Buscar Dirección
+      <input 
+        id="autocomplete-input"
+        type="text" 
+        name="busquedaDireccion" 
+        [(ngModel)]="busquedaDireccion"
+        placeholder="Escribe la dirección (ej: Calle Principal 123, Arroyo Seco, Querétaro)"
+        required 
+      />
+      <small class="hint" *ngIf="formModel.latitud && formModel.longitud">
+        ✅ Ubicación capturada: {{ formModel.latitud?.toFixed(6) }}, {{ formModel.longitud?.toFixed(6) }}
+      </small>
+      <small class="hint warning" *ngIf="!formModel.latitud || !formModel.longitud">
+        ⚠️ Selecciona una dirección de las sugerencias para capturar las coordenadas
+      </small>
     </label>
 
     <label>
