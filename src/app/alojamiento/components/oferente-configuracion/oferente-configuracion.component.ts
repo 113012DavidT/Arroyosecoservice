@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface Perfil {
   nombre: string;
@@ -57,16 +58,41 @@ interface Perfil {
     .btn.primary { background: #1c66d6; color: #fff; border: none; border-radius: 10px; padding: .6rem 1rem; cursor: pointer; }
   `]
 })
-export class OferenteConfiguracionComponent {
+export class OferenteConfiguracionComponent implements OnInit {
   private toastService = inject(ToastService);
+  private authService = inject(AuthService);
 
   perfil: Perfil = {
-    nombre: 'Juan Pérez',
-    correo: 'juan@example.com',
-    telefono: '4421234567',
+    nombre: '',
+    correo: '',
+    telefono: '',
     notificarEmail: true,
     notificarSms: false,
   };
+
+  ngOnInit() {
+    // Obtener datos del JWT token
+    const token = this.authService.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        
+        // Extraer nombre y email del token
+        this.perfil.nombre = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 
+                            payload['name'] || 
+                            payload['unique_name'] || 
+                            'Usuario';
+        
+        this.perfil.correo = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || 
+                            payload['email'] || 
+                            '';
+        
+        // Teléfono y preferencias se pueden cargar desde el API si están disponibles
+      } catch (error) {
+        console.error('Error al decodificar token:', error);
+      }
+    }
+  }
 
   guardar(form: NgForm) {
     if (form.invalid) return;
