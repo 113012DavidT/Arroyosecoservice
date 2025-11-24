@@ -102,9 +102,11 @@ export class ReservasService {
   crearConComprobante(payload: CrearReservaDto, archivo: File): Observable<any> {
     const form = new FormData();
 
-    // ¡¡ESTO ES LO QUE ESPERA TU BACKEND!!
-    form.append('reserva', JSON.stringify(payload));
-    form.append('comprobante', archivo, archivo.name);
+    // Enviar cada campo por separado (más compatible con ASP.NET)
+    form.append('AlojamientoId', payload.alojamientoId.toString());
+    form.append('FechaEntrada', payload.fechaEntrada);
+    form.append('FechaSalida', payload.fechaSalida);
+    form.append('Comprobante', archivo, archivo.name);
 
     // Importante: NO agregues headers manualmente → deja que el navegador genere el boundary
     return this.api.post('/reservas/crear-con-comprobante', form);

@@ -156,11 +156,11 @@ export class DetalleAlojamientoComponent implements OnInit {
   }
 
   private formatDateLocal(d: Date): string {
-    // Return YYYY-MM-DDTHH:mm:ss in local timezone (backend expects DateTime)
+    // Return YYYY-MM-DD (backend expects string, not DateTime)
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}T00:00:00`;
+    return `${year}-${month}-${day}`;
   }
 
   abrirComoLlegar() {
