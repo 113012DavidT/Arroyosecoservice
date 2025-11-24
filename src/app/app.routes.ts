@@ -326,6 +326,24 @@ export const routes: Routes = [
             }
           },
           {
+            path: 'notificaciones',
+            component: ClienteNotificacionesComponent,
+            data: {
+              heroTitle: 'Notificaciones',
+              heroSubtitle: 'Mantente al día con nuestras novedades.',
+              heroImage: 'assets/images/hero-notificaciones.svg'
+            }
+          },
+          {
+            path: 'perfil',
+            component: ClientePerfilComponent,
+            data: {
+              heroTitle: 'Mi Perfil',
+              heroSubtitle: 'Administra tu información personal.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
+          {
             path: ':id',
             component: DetalleGastronomiaComponent,
             data: {

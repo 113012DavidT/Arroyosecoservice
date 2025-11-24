@@ -148,6 +148,33 @@
       border-bottom-color: #c73619;
     }
   }
+
+  &.switch-experience {
+    color: #0891b2;
+    font-weight: 600;
+    border-top: 2px solid #e5e7eb;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+
+    @media (min-width: 768px) {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0.5rem;
+      margin-left: auto;
+    }
+
+    &:hover {
+      color: #0e7490;
+      background: #cffafe;
+      padding-left: 1rem;
+
+      @media (min-width: 768px) {
+        background: transparent;
+        padding-left: 0;
+        border-bottom-color: #0891b2;
+      }
+    }
+  }
 }
 
 .logout {
