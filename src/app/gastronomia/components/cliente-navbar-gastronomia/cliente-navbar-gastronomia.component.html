@@ -15,15 +15,17 @@
       <a routerLink="/cliente/gastronomia/reservas" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Mis Reservas</a>
       <a routerLink="/cliente/gastronomia/notificaciones" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Notificaciones</a>
       <a routerLink="/cliente/gastronomia/perfil" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Mi Perfil</a>
-      <a routerLink="/cliente/home" class="nav-link switch-experience" (click)="closeMenu()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12M8 12h12M8 17h12M3 7h.01M3 12h.01M3 17h.01"/>
-        </svg>
-        Cambiar Experiencia
+      <a routerLink="/cliente/alojamientos" class="ir-alojamientos mobile-link" (click)="closeMenu()">
+        🏠 Ir a Alojamientos
       </a>
       <a routerLink="/login" class="logout logout-mobile" (click)="closeMenu()">Cerrar sesión</a>
     </div>
 
-    <a routerLink="/login" class="logout logout-desktop">Cerrar sesión</a>
+    <div class="navbar-actions">
+      <a routerLink="/cliente/alojamientos" class="ir-alojamientos desktop-link" title="Ver alojamientos">
+        🏠 Ir a Alojamientos
+      </a>
+      <a routerLink="/login" class="logout logout-desktop">Cerrar sesión</a>
+    </div>
   </div>
 </nav>

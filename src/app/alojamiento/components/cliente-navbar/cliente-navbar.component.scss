@@ -68,6 +68,30 @@
   vertical-align: middle;
 }
 
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.ir-restaurantes {
+  text-decoration: none;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 2px solid #059669;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ir-restaurantes:hover {
+  background: #059669;
+  color: #fff;
+}
+
 .logout {
   text-decoration: none;
   color: #dc2626;
@@ -93,5 +117,15 @@
     order: 3;
     width: 100%;
     gap: 1rem;
+  }
+
+  .navbar-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ir-restaurantes {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
   }
 }
