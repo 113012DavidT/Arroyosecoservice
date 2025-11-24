@@ -91,6 +91,19 @@ export class AuthService {
     return tipo ? Number(tipo) : null;
   }
 
+  requiereCambioPassword(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    const payload = this.decodeJwt(token);
+    if (!payload) return false;
+    
+    const requiere = payload['RequiereCambioPassword'] || 
+                     payload['requiereCambioPassword'] || 
+                     payload['requiresPasswordChange'];
+    
+    return requiere === 'True' || requiere === true || requiere === 'true';
+  }
+
   login(payload: LoginPayload): Observable<any> {
     return this.api.post<any>('/auth/login', payload).pipe(
       tap(res => {

@@ -40,18 +40,21 @@ import { OferenteReservasGastronomiaComponent } from './gastronomia/components/o
 import { AdminDashboardGastronomiaComponent } from './alojamiento/components/admin-dashboard-gastronomia/admin-dashboard-gastronomia.component';
 import { AdminOferentesGastronomiaComponent } from './alojamiento/components/admin-oferentes-gastronomia/admin-oferentes-gastronomia.component';
 import { AdminSolicitudesComponent } from './alojamiento/components/admin-solicitudes/admin-solicitudes.component';
+import { CambiarPasswordForzadoComponent } from './shared/components/cambiar-password-forzado/cambiar-password-forzado.component';
+import { cambioPasswordGuard } from './core/guards/cambio-password.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
+  { path: 'cambiar-password', component: CambiarPasswordForzadoComponent },
   {
     path: 'admin',
     children: [
       { path: 'login', component: AdminLoginComponent },
-      { path: 'home', component: AdminHomeSelectorComponent },
+      { path: 'home', component: AdminHomeSelectorComponent, canActivate: [cambioPasswordGuard] },
       {
         path: '',
         component: AdminLayoutComponent,
-        // canActivate: [adminGuard],
+        canActivate: [cambioPasswordGuard],
         children: [
           {
             path: 'dashboard',
@@ -156,11 +159,11 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: OferenteLoginComponent },
       { path: 'solicitud', component: OferenteSolicitudComponent },
-      { path: 'home', component: OferenteHomeSelectorComponent },
+      { path: 'home', component: OferenteHomeSelectorComponent, canActivate: [cambioPasswordGuard] },
       {
         path: '',
         component: OferenteLayoutComponent,
-        // canActivate: [authGuard],
+        canActivate: [cambioPasswordGuard],
         children: [
           {
             path: 'dashboard',
@@ -237,10 +240,11 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: ClienteLoginComponent },
       { path: 'registrar', component: ClienteRegisterComponent },
-      { path: 'home', component: HomeSelectorComponent },
+      { path: 'home', component: HomeSelectorComponent, canActivate: [cambioPasswordGuard] },
       {
         path: '',
         component: ClienteLayoutComponent,
+        canActivate: [cambioPasswordGuard],
         children: [
           {
             path: 'alojamientos',
@@ -306,6 +310,7 @@ export const routes: Routes = [
       {
         path: 'gastronomia',
         component: ClienteLayoutGastronomiaComponent,
+        canActivate: [cambioPasswordGuard],
         children: [
           {
             path: '',
@@ -359,6 +364,7 @@ export const routes: Routes = [
   {
     path: 'oferente/gastronomia',
     component: OferenteLayoutGastronomiaComponent,
+    canActivate: [cambioPasswordGuard],
     children: [
       {
         path: 'dashboard',
