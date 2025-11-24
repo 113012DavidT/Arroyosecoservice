@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private readonly http = inject(HttpClient);
   // Base API URL (adjust if different)
-  readonly baseUrl = 'https://localhost:7190/api';
+  readonly baseUrl = 'https://arroyosecomascercadeti.onrender.com/api';
 
   constructor() { }
 

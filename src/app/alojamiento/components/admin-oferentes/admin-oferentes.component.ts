@@ -5,6 +5,12 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { AdminOferentesService, OferenteDto } from '../../services/admin-oferentes.service';
 import { first } from 'rxjs/operators';
 
+enum TipoOferente {
+  Alojamiento = 1,
+  Gastronomia = 2,
+  Ambos = 3
+}
+
 interface Oferente {
   id: string;
   nombre: string;
@@ -12,6 +18,7 @@ interface Oferente {
   telefono: string;
   alojamientos: number;
   estado: 'Activo' | 'Inactivo' | 'Pendiente';
+  tipo?: TipoOferente;
 }
 
 @Component({
@@ -59,18 +66,19 @@ export class AdminOferentesComponent {
   }
 
   private loadOferentes() {
-    this.adminService.list().pipe(first()).subscribe({
+    this.adminService.listAlojamiento().pipe(first()).subscribe({
       next: (data) => {
         this.oferentes = (data || []).map((d: OferenteDto) => ({
           id: d.id,
           nombre: d.nombre,
-          correo: d.correo || '',
+          correo: d.email || '',
           telefono: d.telefono || '',
-          alojamientos: d.alojamientos ?? 0,
-          estado: (d.estado as any) || 'Pendiente'
+          alojamientos: d.numeroAlojamientos ?? d.alojamientos ?? 0,
+          estado: (d.estado as any) || 'Pendiente',
+          tipo: d.tipo ?? TipoOferente.Alojamiento
         }));
       },
-      error: (err) => this.toastService.error('Error al cargar oferentes')
+      error: (err) => this.toastService.error('Error al cargar oferentes de alojamiento')
     });
   }
 
@@ -80,18 +88,27 @@ export class AdminOferentesComponent {
   }
 
   toggleEstado(o: Oferente) {
-    const estadoAnterior = o.estado;
-    o.estado = o.estado === 'Activo' ? 'Inactivo' : 'Activo';
-
-    if (o.estado === 'Activo') {
-      this.toastService.success(`Oferente ${o.nombre} activado`);
-    } else {
-      this.toastService.warning(`Oferente ${o.nombre} desactivado`);
-    }
+    const nuevoEstado = o.estado === 'Activo' ? 'Inactivo' : 'Activo';
+    
+    this.adminService.cambiarEstado(o.id, nuevoEstado).pipe(first()).subscribe({
+      next: () => {
+        o.estado = nuevoEstado as any;
+        if (nuevoEstado === 'Activo') {
+          this.toastService.success(`Oferente ${o.nombre} activado`);
+        } else {
+          this.toastService.warning(`Oferente ${o.nombre} desactivado`);
+        }
+        this.loadOferentes();
+      },
+      error: (err) => {
+        this.toastService.error('Error al cambiar estado del oferente');
+        console.error('Error toggleEstado:', err);
+      }
+    });
   }
 
   abrirRegistro() {
-    this.nuevo = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente' };
+    this.nuevo = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente', tipo: TipoOferente.Alojamiento };
     this.modalRegistroAbierto = true;
   }
 
@@ -101,19 +118,28 @@ export class AdminOferentesComponent {
 
   registrar(form: NgForm) {
     if (form.invalid) return;
-    // create as admin: this endpoint expects an email/password/nombre
     const payload = {
-      email: this.nuevo.correo,
+      email: this.nuevo.correo!,
       password: 'Hola.123',
-      nombre: this.nuevo.nombre
+      nombre: this.nuevo.nombre!,
+      telefono: this.nuevo.telefono!,
+      role: 'Oferente',
+      tipoOferente: TipoOferente.Alojamiento
     };
-    this.adminService.createUsuarioOferente(payload as any).pipe(first()).subscribe({
+    this.adminService.createUsuarioOferente(payload).pipe(first()).subscribe({
       next: () => {
-        this.toastService.success(`Oferente ${this.nuevo.nombre} registrado exitosamente`);
+        this.toastService.success(`Oferente de alojamiento ${this.nuevo.nombre} registrado exitosamente`);
         this.cerrarRegistro();
         this.loadOferentes();
       },
-      error: () => this.toastService.error('Error al registrar oferente')
+      error: (err) => {
+        console.error('Error al registrar oferente:', err);
+        if (err.status === 409) {
+          this.toastService.error('El correo electrónico ya está registrado');
+        } else {
+          this.toastService.error('Error al registrar oferente: ' + (err.error?.message || err.message));
+        }
+      }
     });
   }
 
@@ -132,21 +158,27 @@ export class AdminOferentesComponent {
     const idx = this.oferentes.findIndex(x => x.id === this.editar!.id);
     if (idx > -1) {
       const id = this.editar!.id;
-      const payload = { nombre: this.editar!.nombre };
+      const payload = { 
+        nombre: this.editar!.nombre,
+        email: this.editar!.correo,
+        telefono: this.editar!.telefono,
+        tipo: this.editar!.tipo
+      };
       this.adminService.update(id, payload).pipe(first()).subscribe({
         next: () => {
-          this.oferentes[idx] = {
-            ...this.oferentes[idx],
-            nombre: this.editar!.nombre!,
-            correo: this.editar!.correo!,
-            telefono: this.editar!.telefono!
-          };
           this.toastService.success(`Oferente ${this.editar!.nombre} actualizado`);
+          this.loadOferentes();
+          this.cerrarEditar();
         },
-        error: () => this.toastService.error('Error al actualizar oferente')
+        error: (err) => {
+          console.error('Error al actualizar oferente:', err);
+          this.toastService.error('Error al actualizar oferente');
+          this.cerrarEditar();
+        }
       });
+    } else {
+      this.cerrarEditar();
     }
-    this.cerrarEditar();
   }
 
   eliminar(o: Oferente) {

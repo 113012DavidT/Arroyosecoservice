@@ -8,6 +8,8 @@ export interface NotificacionDto {
   titulo?: string;
   fecha?: string;
   leida?: boolean;
+  tipo?: string;
+  urlAccion?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -15,14 +17,14 @@ export class NotificacionesService {
   private readonly api = inject(ApiService);
 
   list(soloNoLeidas = false): Observable<NotificacionDto[]> {
-    return this.api.get<NotificacionDto[]>(`/Notificaciones`, { soloNoLeidas });
+    return this.api.get<NotificacionDto[]>(`/notificaciones`);
   }
 
-  marcarLeida(id: number | string, body: { mensaje?: string } = {}): Observable<any> {
-    return this.api.patch(`/Notificaciones/${id}/leer`, body);
+  marcarLeida(id: number | string): Observable<any> {
+    return this.api.put(`/notificaciones/${id}/leer`, {});
   }
 
   eliminar(id: number | string): Observable<any> {
-    return this.api.delete(`/Notificaciones/${id}`);
+    return this.api.delete(`/notificaciones/${id}`);
   }
 }

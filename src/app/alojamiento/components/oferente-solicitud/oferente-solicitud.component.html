@@ -14,13 +14,26 @@
           <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" />
         </div>
 
-        <h2>Solicitud al padrón de hospedaje</h2>
+        <h2>Solicitud al padrón de oferentes</h2>
         <p class="subtitle">Completa los datos para que podamos validar tu registro</p>
 
         <form #f="ngForm" (ngSubmit)="submit(f)">
           <label>
+            Tipo de negocio
+            <select name="tipoNegocio" [(ngModel)]="model.tipoNegocio" required>
+              <option [ngValue]="1">Alojamiento / Hospedaje</option>
+              <option [ngValue]="2">Gastronomía / Restaurante</option>
+            </select>
+          </label>
+
+          <label>
             Nombre
             <input type="text" name="nombre" [(ngModel)]="model.nombre" placeholder="Juan Pérez" required />
+          </label>
+
+          <label>
+            Correo electrónico
+            <input type="email" name="correo" [(ngModel)]="model.correo" placeholder="juan@ejemplo.com" required />
           </label>
 
             <label>
@@ -30,7 +43,7 @@
 
             <label>
               Contexto del negocio
-              <input type="text" name="contexto" [(ngModel)]="model.contexto" placeholder="Ej: Servicio tipo Airbnb" required />
+              <input type="text" name="contexto" [(ngModel)]="model.contexto" placeholder="Ej: Servicio tipo Airbnb o Restaurante familiar" required />
             </label>
 
             <button type="submit" [disabled]="f.invalid || isSubmitting">

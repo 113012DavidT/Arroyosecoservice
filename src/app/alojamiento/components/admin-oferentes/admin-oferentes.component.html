@@ -131,6 +131,21 @@
           Teléfono
           <input type="tel" name="telefono" [(ngModel)]="e.telefono" required />
         </label>
+        <label>
+          Tipo de Oferente
+          <select name="tipo" [(ngModel)]="e.tipo" required>
+            <option [value]="1">Alojamiento</option>
+            <option [value]="2">Gastronomía</option>
+            <option [value]="3">Ambos</option>
+          </select>
+        </label>
+        <label>
+          Estado
+          <select name="estado" [(ngModel)]="e.estado" required>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </label>
       </div>
       <div class="modal__footer">
         <button class="btn ghost" type="button" (click)="cerrarEditar()">Cancelar</button>

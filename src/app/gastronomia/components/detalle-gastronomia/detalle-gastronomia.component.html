@@ -1,0 +1,62 @@
+<div *ngIf="loading" class="loading">Cargando...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div *ngIf="!loading && !error && establecimiento" class="detalle">
+  <div class="header">
+    <img [src]="establecimiento.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="establecimiento.nombre" class="foto-principal" />
+    <div class="info">
+      <h1>{{ establecimiento.nombre }}</h1>
+      <p class="ubicacion">📍 {{ establecimiento.ubicacion }}</p>
+      <p class="descripcion">{{ establecimiento.descripcion }}</p>
+      <button class="btn-reservar" (click)="toggleReservaForm()">
+        {{ showReservaForm ? 'Cancelar' : 'Reservar Mesa' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulario de reserva -->
+  <div *ngIf="showReservaForm" class="reserva-form">
+    <h3>Hacer una reserva</h3>
+    <div class="form-group">
+      <label>Fecha y hora</label>
+      <input type="datetime-local" [(ngModel)]="fecha" required />
+    </div>
+    <div class="form-group">
+      <label>Número de personas</label>
+      <input type="number" [(ngModel)]="numeroPersonas" min="1" max="20" required />
+    </div>
+    <div class="form-group" *ngIf="establecimiento.mesas && establecimiento.mesas.length > 0">
+      <label>Mesa (opcional)</label>
+      <select [(ngModel)]="mesaId">
+        <option [ngValue]="null">Cualquier mesa disponible</option>
+        <option *ngFor="let mesa of establecimiento.mesas" [ngValue]="mesa.id" [disabled]="!mesa.disponible">
+          Mesa {{ mesa.numero }} - {{ mesa.capacidad }} personas {{ !mesa.disponible ? '(No disponible)' : '' }}
+        </option>
+      </select>
+    </div>
+    <button class="btn-confirmar" (click)="crearReserva()" [disabled]="submitting">
+      {{ submitting ? 'Procesando...' : 'Confirmar Reserva' }}
+    </button>
+  </div>
+
+  <!-- Menús -->
+  <div class="menus-section" *ngIf="menus.length > 0">
+    <h2>Nuestro Menú</h2>
+    <div class="menus">
+      <div class="menu" *ngFor="let menu of menus">
+        <h3>{{ menu.nombre }}</h3>
+        <div class="items" *ngIf="menu.items && menu.items.length > 0">
+          <div class="item" *ngFor="let item of menu.items">
+            <div class="item-info">
+              <h4>{{ item.nombre }}</h4>
+              <p>{{ item.descripcion }}</p>
+            </div>
+            <span class="precio">${{ item.precio }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a routerLink="/cliente/gastronomia" class="btn-back">← Volver a la lista</a>
+</div>

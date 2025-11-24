@@ -30,7 +30,17 @@ export class AdminLoginComponent {
       return;
     }
     this.auth.login({ email: this.loginModel.email, password: this.loginModel.password }).pipe(first()).subscribe({
-      next: () => this.router.navigateByUrl('/admin/dashboard'),
+      next: () => {
+        // Detect role and redirect appropriately
+        const roles = this.auth.getRoles();
+        if (roles.some(r => /admin/i.test(r))) {
+          this.router.navigate(['/admin/home']);
+        } else if (roles.some(r => /oferente/i.test(r))) {
+          this.router.navigate(['/oferente/dashboard']);
+        } else {
+          this.router.navigate(['/cliente/home']);
+        }
+      },
       error: () => alert('No se pudo iniciar sesión como administrador')
     });
   }

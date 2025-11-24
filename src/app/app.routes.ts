@@ -23,7 +23,23 @@ import { ClienteReservasComponent } from './alojamiento/components/cliente-reser
 import { ClienteNotificacionesComponent } from './alojamiento/components/cliente-notificaciones/cliente-notificaciones.component';
 import { ClientePerfilComponent } from './alojamiento/components/cliente-perfil/cliente-perfil.component';
 import { ClienteFavoritosComponent } from './alojamiento/components/cliente-favoritos/cliente-favoritos.component';
-// duplicate import removed
+import { HomeSelectorComponent } from './shared/components/home-selector/home-selector.component';
+import { AdminHomeSelectorComponent } from './shared/components/admin-home-selector/admin-home-selector.component';
+import { OferenteHomeSelectorComponent } from './shared/components/oferente-home-selector/oferente-home-selector.component';
+// Gastronomía imports
+import { ClienteLayoutGastronomiaComponent } from './gastronomia/components/cliente-layout-gastronomia/cliente-layout-gastronomia.component';
+import { ListaGastronomiaComponent } from './gastronomia/components/lista-gastronomia/lista-gastronomia.component';
+import { DetalleGastronomiaComponent } from './gastronomia/components/detalle-gastronomia/detalle-gastronomia.component';
+import { ClienteReservasGastronomiaComponent } from './gastronomia/components/cliente-reservas-gastronomia/cliente-reservas-gastronomia.component';
+import { OferenteLayoutGastronomiaComponent } from './gastronomia/components/oferente-layout-gastronomia/oferente-layout-gastronomia.component';
+import { OferenteDashboardGastronomiaComponent } from './gastronomia/components/oferente-dashboard-gastronomia/oferente-dashboard-gastronomia.component';
+import { GestionEstablecimientosComponent } from './gastronomia/components/gestion-establecimientos/gestion-establecimientos.component';
+import { FormEstablecimientoComponent } from './gastronomia/components/form-establecimiento/form-establecimiento.component';
+import { DetalleEstablecimientoOferenteComponent } from './gastronomia/components/detalle-establecimiento-oferente/detalle-establecimiento-oferente.component';
+import { OferenteReservasGastronomiaComponent } from './gastronomia/components/oferente-reservas-gastronomia/oferente-reservas-gastronomia.component';
+import { AdminDashboardGastronomiaComponent } from './alojamiento/components/admin-dashboard-gastronomia/admin-dashboard-gastronomia.component';
+import { AdminOferentesGastronomiaComponent } from './alojamiento/components/admin-oferentes-gastronomia/admin-oferentes-gastronomia.component';
+import { AdminSolicitudesComponent } from './alojamiento/components/admin-solicitudes/admin-solicitudes.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -31,6 +47,7 @@ export const routes: Routes = [
     path: 'admin',
     children: [
       { path: 'login', component: AdminLoginComponent },
+      { path: 'home', component: AdminHomeSelectorComponent },
       {
         path: '',
         component: AdminLayoutComponent,
@@ -61,6 +78,74 @@ export const routes: Routes = [
               heroImage: 'assets/images/hero-notificaciones.svg'
             }
           },
+          {
+            path: 'solicitudes',
+            component: AdminSolicitudesComponent,
+            data: {
+              heroTitle: 'Solicitudes de Oferentes',
+              heroSubtitle: 'Revisa y aprueba nuevas solicitudes',
+              heroImage: 'assets/images/hero-oferentes.svg'
+            }
+          },
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+        ]
+      },
+      // Rutas de gastronomía para admin
+      {
+        path: 'gastronomia',
+        component: AdminLayoutComponent,
+        children: [
+          {
+            path: 'dashboard',
+            component: AdminDashboardGastronomiaComponent,
+            data: {
+              heroTitle: 'Dashboard de Gastronomía',
+              heroSubtitle: 'Gestiona restaurantes y reservas.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
+          {
+            path: 'establecimientos',
+            component: AdminOferentesGastronomiaComponent,
+            data: {
+              heroTitle: 'Gestión de Oferentes de Gastronomía',
+              heroImage: 'assets/images/hero-oferentes.svg'
+            }
+          },
+          {
+            path: 'oferentes',
+            component: AdminOferentesGastronomiaComponent,
+            data: {
+              heroTitle: 'Gestión de Oferentes de Gastronomía',
+              heroImage: 'assets/images/hero-oferentes.svg'
+            }
+          },
+          {
+            path: 'reservas',
+            component: AdminNotificacionesComponent,
+            data: {
+              heroTitle: 'Gestión de Reservas',
+              heroImage: 'assets/images/hero-notificaciones.svg'
+            }
+          },
+          {
+            path: 'solicitudes',
+            component: AdminSolicitudesComponent,
+            data: {
+              heroTitle: 'Solicitudes de Oferentes - Gastronomía',
+              heroSubtitle: 'Revisa y aprueba nuevas solicitudes de gastronomía',
+              heroImage: 'assets/images/hero-oferentes.svg'
+            }
+          },
+          {
+            path: 'notificaciones',
+            component: AdminNotificacionesComponent,
+            data: {
+              heroTitle: 'Notificaciones - Gastronomía',
+              heroSubtitle: 'Gestiona notificaciones del módulo de gastronomía',
+              heroImage: 'assets/images/hero-notificaciones.svg'
+            }
+          },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
       }
@@ -70,7 +155,8 @@ export const routes: Routes = [
     path: 'oferente',
     children: [
       { path: 'login', component: OferenteLoginComponent },
-  { path: 'solicitud', component: OferenteSolicitudComponent },
+      { path: 'solicitud', component: OferenteSolicitudComponent },
+      { path: 'home', component: OferenteHomeSelectorComponent },
       {
         path: '',
         component: OferenteLayoutComponent,
@@ -150,7 +236,8 @@ export const routes: Routes = [
     path: 'cliente',
     children: [
       { path: 'login', component: ClienteLoginComponent },
-  { path: 'registrar', component: ClienteRegisterComponent },
+      { path: 'registrar', component: ClienteRegisterComponent },
+      { path: 'home', component: HomeSelectorComponent },
       {
         path: '',
         component: ClienteLayoutComponent,
@@ -214,7 +301,113 @@ export const routes: Routes = [
           },
           { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
         ]
+      },
+      // Rutas de gastronomía para clientes
+      {
+        path: 'gastronomia',
+        component: ClienteLayoutGastronomiaComponent,
+        children: [
+          {
+            path: '',
+            component: ListaGastronomiaComponent,
+            data: {
+              heroTitle: 'Descubre la gastronomía local',
+              heroSubtitle: 'Explora restaurantes en Arroyo Seco.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
+          {
+            path: 'reservas',
+            component: ClienteReservasGastronomiaComponent,
+            data: {
+              heroTitle: 'Mis Reservas de Restaurantes',
+              heroSubtitle: 'Gestiona tus reservas gastronómicas.',
+              heroImage: 'assets/images/hero-notificaciones.svg'
+            }
+          },
+          {
+            path: ':id',
+            component: DetalleGastronomiaComponent,
+            data: {
+              heroTitle: 'Detalles del restaurante',
+              heroImage: 'assets/images/hero-oferentes.svg'
+            }
+          }
+        ]
       }
+    ]
+  },
+  // Rutas de oferente gastronomía
+  {
+    path: 'oferente/gastronomia',
+    component: OferenteLayoutGastronomiaComponent,
+    children: [
+      {
+        path: 'dashboard',
+        component: OferenteDashboardGastronomiaComponent,
+        data: {
+          heroTitle: '¡Bienvenido Oferente de Gastronomía!',
+          heroSubtitle: 'Gestiona tus restaurantes y reservas.',
+          heroImage: 'assets/images/hero-dashboard.svg'
+        }
+      },
+      {
+        path: 'establecimientos',
+        component: GestionEstablecimientosComponent,
+        data: {
+          heroTitle: 'Gestión de Restaurantes',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      {
+        path: 'establecimientos/agregar',
+        component: FormEstablecimientoComponent,
+        data: {
+          heroTitle: 'Nuevo Restaurante',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      {
+        path: 'establecimientos/:id/editar',
+        component: FormEstablecimientoComponent,
+        data: {
+          heroTitle: 'Editar Restaurante',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      {
+        path: 'establecimientos/:id',
+        component: DetalleEstablecimientoOferenteComponent,
+        data: {
+          heroTitle: 'Detalle de Restaurante',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      {
+        path: 'reservas',
+        component: OferenteReservasGastronomiaComponent,
+        data: {
+          heroTitle: 'Gestión de Reservas',
+          heroImage: 'assets/images/hero-notificaciones.svg'
+        }
+      },
+      {
+        path: 'notificaciones',
+        component: OferenteNotificacionesComponent,
+        data: {
+          heroTitle: 'Notificaciones',
+          heroImage: 'assets/images/hero-notificaciones.svg'
+        }
+      },
+      {
+        path: 'configuracion',
+        component: OferenteConfiguracionComponent,
+        data: {
+          heroTitle: 'Configuración',
+          heroImage: 'assets/images/hero-dashboard.svg'
+        }
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },

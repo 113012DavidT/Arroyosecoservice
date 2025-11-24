@@ -2,28 +2,45 @@ import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { Observable } from 'rxjs';
 
+export enum TipoOferente {
+  Alojamiento = 1,
+  Gastronomia = 2,
+  Ambos = 3
+}
+
 export interface OferenteDto {
   id: string;
   nombre: string;
-  correo?: string;
+  email?: string;
   telefono?: string;
   alojamientos?: number;
+  numeroAlojamientos?: number;
   estado?: string;
+  tipo?: TipoOferente;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AdminOferentesService {
   private readonly api = inject(ApiService);
 
-  list(): Observable<OferenteDto[]> {
-    return this.api.get<OferenteDto[]>('/admin/oferentes');
+  list(tipo?: TipoOferente): Observable<OferenteDto[]> {
+    const params = tipo ? `?tipo=${tipo}` : '';
+    return this.api.get<OferenteDto[]>(`/Oferentes${params}`);
+  }
+
+  listAlojamiento(): Observable<OferenteDto[]> {
+    return this.api.get<OferenteDto[]>('/Oferentes/alojamiento');
+  }
+
+  listGastronomia(): Observable<OferenteDto[]> {
+    return this.api.get<OferenteDto[]>('/Oferentes/gastronomia');
   }
 
   getById(id: string): Observable<OferenteDto> {
     return this.api.get<OferenteDto>(`/admin/oferentes/${id}`);
   }
 
-  createUsuarioOferente(payload: { email: string; password: string; nombre?: string }): Observable<any> {
+  createUsuarioOferente(payload: { email: string; password: string; nombre?: string; telefono?: string; role?: string; tipoOferente?: number }): Observable<any> {
     return this.api.post('/admin/oferentes/usuarios', payload);
   }
 
@@ -36,14 +53,27 @@ export class AdminOferentesService {
   }
 
   listSolicitudes(): Observable<any[]> {
-    return this.api.get<any[]>('/admin/oferentes/solicitudes');
+    return this.api.get<any[]>('/solicitudesoferente?estatus=Pendiente');
   }
 
-  aprobarSolicitud(id: number): Observable<any> {
-    return this.api.post(`/admin/oferentes/solicitudes/${id}/aprobar`, {});
+  crearSolicitud(payload: { nombreSolicitante: string; telefono: string; mensaje: string; tipoSolicitado: number; correo?: string; nombreNegocio?: string }): Observable<any> {
+    return this.api.post('/solicitudesoferente', payload);
+  }
+
+  aprobarSolicitud(id: number, tipoOferente?: number): Observable<any> {
+    const body = tipoOferente ? { tipoOferente } : {};
+    return this.api.post(`/admin/oferentes/solicitudes/${id}/aprobar`, body);
   }
 
   rechazarSolicitud(id: number): Observable<any> {
     return this.api.post(`/admin/oferentes/solicitudes/${id}/rechazar`, {});
+  }
+
+  cambiarTipo(id: string, nuevoTipo: TipoOferente): Observable<any> {
+    return this.api.put(`/oferentes/${id}/tipo`, { nuevoTipo });
+  }
+
+  cambiarEstado(id: string, estado: string): Observable<any> {
+    return this.api.put(`/admin/oferentes/${id}/estado`, { estado });
   }
 }

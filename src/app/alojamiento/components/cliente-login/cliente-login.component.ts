@@ -26,7 +26,15 @@ export class ClienteLoginComponent {
       next: () => {
         this.toast.show('Inicio de sesión exitoso', 'success');
         this.loading = false;
-        this.router.navigate(['/cliente/alojamientos']);
+        // Detectar rol y redirigir
+        const roles = this.auth.getRoles();
+        if (roles.some(r => /admin/i.test(r))) {
+          this.router.navigate(['/admin/dashboard']);
+        } else if (roles.some(r => /oferente/i.test(r))) {
+          this.router.navigate(['/oferente/dashboard']);
+        } else {
+          this.router.navigate(['/cliente/home']);
+        }
       },
       error: () => {
         this.toast.show('Credenciales inválidas o error de servidor', 'error');

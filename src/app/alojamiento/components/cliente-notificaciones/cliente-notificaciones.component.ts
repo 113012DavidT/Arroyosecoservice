@@ -62,7 +62,7 @@ export class ClienteNotificacionesComponent implements OnInit {
   }
 
   marcarLeida(notificacion: Notificacion) {
-    this.notiService.marcarLeida(notificacion.id, { mensaje: notificacion.mensaje }).pipe(first()).subscribe({
+    this.notiService.marcarLeida(notificacion.id).pipe(first()).subscribe({
       next: () => {
         const updated = this.notificaciones().map(n => n.id === notificacion.id ? { ...n, leida: true } : n);
         this.notificaciones.set(updated);

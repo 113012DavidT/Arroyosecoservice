@@ -1,1 +1,25 @@
-<p>lista-gastronomia works!</p>
+<div class="toolbar">
+	<input type="text" placeholder="Buscar por nombre o ubicación" [(ngModel)]="search" />
+	<select [(ngModel)]="sortMode">
+		<option value="nombre">Ordenar por nombre</option>
+		<option value="ubicacion">Ordenar por ubicación</option>
+	</select>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando restaurantes...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<section class="grid" *ngIf="!loading && !error">
+	<a class="card" *ngFor="let e of filtered" [routerLink]="['/cliente/gastronomia', e.id]">
+		<div class="thumb" [style.background-image]="'url(' + e.imagen + ')'"></div>
+		<div class="info">
+			<h3>{{ e.nombre }}</h3>
+			<p class="meta">📍 {{ e.ubicacion }}</p>
+			<p class="description">{{ e.descripcion }}</p>
+		</div>
+	</a>
+</section>
+
+<div *ngIf="!loading && !error && filtered.length === 0" class="empty">
+	No se encontraron restaurantes.
+</div>

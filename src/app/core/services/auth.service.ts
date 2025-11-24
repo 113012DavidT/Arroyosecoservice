@@ -76,8 +76,23 @@ export class AuthService {
     return this.getRoles().some(r => /admin/i.test(r));
   }
 
+  getTipoNegocio(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const payload = this.decodeJwt(token);
+    if (!payload) return null;
+    
+    // Buscar en diferentes posibles nombres de claim
+    const tipo = payload['TipoOferente'] || 
+                 payload['tipoOferente'] || 
+                 payload['tipo_oferente'] ||
+                 payload['Tipo'];
+    
+    return tipo ? Number(tipo) : null;
+  }
+
   login(payload: LoginPayload): Observable<any> {
-    return this.api.post<any>('/Auth/login', payload).pipe(
+    return this.api.post<any>('/auth/login', payload).pipe(
       tap(res => {
         const token = res?.token || res?.accessToken || res?.jwt;
         if (token) this.saveToken(token);
@@ -86,7 +101,7 @@ export class AuthService {
   }
 
   register(payload: RegisterPayload): Observable<any> {
-    return this.api.post<any>('/Auth/register', payload);
+    return this.api.post<any>('/auth/register', payload);
   }
 
   me(): Observable<any> {

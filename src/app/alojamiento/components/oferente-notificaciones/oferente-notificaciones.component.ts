@@ -85,7 +85,7 @@ export class OferenteNotificacionesComponent implements OnInit {
 
   toggleLeida(n: Notificacion) {
     const nuevoEstado = !n.leida;
-    this.notiService.marcarLeida(n.id, { mensaje: n.mensaje }).pipe(first()).subscribe({
+    this.notiService.marcarLeida(n.id).pipe(first()).subscribe({
       next: () => n.leida = nuevoEstado,
       error: () => this.error = 'Error al actualizar notificación'
     });

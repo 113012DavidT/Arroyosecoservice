@@ -1,0 +1,232 @@
+.oferentes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  padding: 0 0.5rem;
+  background: #fff;
+  min-width: 280px;
+  flex: 1;
+  max-width: 500px;
+}
+
+.search input {
+  flex: 1;
+  border: none;
+  padding: 0.6rem 0.75rem;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.search button {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.search svg {
+  width: 20px;
+  height: 20px;
+  fill: #6b7280;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn.primary {
+  background: #1c66d6;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #1550a8;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: #1c66d6;
+  padding: 0.5rem 1rem;
+}
+
+.btn.ghost:hover {
+  background: #eff6ff;
+}
+
+.btn.warning {
+  background: #fbbf24;
+  color: #78350f;
+  padding: 0.5rem 1rem;
+}
+
+.btn.warning:hover {
+  background: #f59e0b;
+}
+
+.btn.success {
+  background: #10b981;
+  color: #fff;
+  padding: 0.5rem 1rem;
+}
+
+.btn.success:hover {
+  background: #059669;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.actions {
+  text-align: right;
+}
+
+td.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  border-bottom: none;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pill.activo {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.pill.inactivo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.pill.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1.05rem;
+  background: #fff;
+  border-radius: 12px;
+}
+
+/* Modales reutilizables */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 40;
+}
+
+.modal {
+  position: fixed;
+  inset: 10% auto auto 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 680px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+.modal__body { padding: 1.25rem; }
+.modal__footer { padding: 1rem 1.25rem; display: flex; justify-content: flex-end; gap: .5rem; border-top: 1px solid #eee; }
+.modal .close { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem 1rem; }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem 1rem; }
+label { display: grid; gap: .5rem; font-weight: 600; color: #374151; }
+input { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; }
+.btn.primary { background: #1c66d6; color: #fff; }
+.btn.ghost { background: transparent; color: #1c66d6; }
+.btn.danger { background: #ef4444; color: #fff; }
+.btn.danger:hover { background: #dc2626; }
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .form-grid { grid-template-columns: 1fr; }
+}

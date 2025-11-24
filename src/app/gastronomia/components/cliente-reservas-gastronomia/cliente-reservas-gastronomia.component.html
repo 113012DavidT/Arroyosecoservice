@@ -1,0 +1,70 @@
+<div class="tabs">
+  <button 
+    [class.active]="activeTab === 'activas'" 
+    (click)="activeTab = 'activas'">
+    Activas ({{ reservasActivas.length }})
+  </button>
+  <button 
+    [class.active]="activeTab === 'historial'" 
+    (click)="activeTab = 'historial'">
+    Historial ({{ reservasHistorial.length }})
+  </button>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando reservas...</div>
+
+<!-- Reservas activas -->
+<div *ngIf="activeTab === 'activas' && !loading">
+  <div *ngIf="reservasActivas.length === 0" class="empty">
+    No tienes reservas activas.
+  </div>
+  
+  <div class="reservas-grid" *ngIf="reservasActivas.length > 0">
+    <div class="reserva-card" *ngFor="let reserva of reservasActivas">
+      <div class="reserva-header">
+        <h3>{{ reserva.establecimientoNombre }}</h3>
+        <span class="estado" [ngClass]="getEstadoClass(reserva.estado)">
+          {{ reserva.estado }}
+        </span>
+      </div>
+      <div class="reserva-body">
+        <p><strong>Fecha:</strong> {{ reserva.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Personas:</strong> {{ reserva.numeroPersonas }}</p>
+        <p *ngIf="reserva.mesaNumero"><strong>Mesa:</strong> {{ reserva.mesaNumero }}</p>
+        <p *ngIf="reserva.total"><strong>Total:</strong> ${{ reserva.total }}</p>
+      </div>
+      <div class="reserva-actions">
+        <button 
+          *ngIf="reserva.estado !== 'Cancelada'" 
+          class="btn-cancelar" 
+          (click)="cancelarReserva(reserva)">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Historial -->
+<div *ngIf="activeTab === 'historial' && !loading">
+  <div *ngIf="reservasHistorial.length === 0" class="empty">
+    No hay reservas en el historial.
+  </div>
+  
+  <div class="reservas-grid" *ngIf="reservasHistorial.length > 0">
+    <div class="reserva-card" *ngFor="let reserva of reservasHistorial">
+      <div class="reserva-header">
+        <h3>{{ reserva.establecimientoNombre }}</h3>
+        <span class="estado" [ngClass]="getEstadoClass(reserva.estado)">
+          {{ reserva.estado }}
+        </span>
+      </div>
+      <div class="reserva-body">
+        <p><strong>Fecha:</strong> {{ reserva.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Personas:</strong> {{ reserva.numeroPersonas }}</p>
+        <p *ngIf="reserva.mesaNumero"><strong>Mesa:</strong> {{ reserva.mesaNumero }}</p>
+        <p *ngIf="reserva.total"><strong>Total:</strong> ${{ reserva.total }}</p>
+      </div>
+    </div>
+  </div>
+</div>

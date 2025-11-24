@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AdminOferentesService } from '../../services/admin-oferentes.service';
+import { first } from 'rxjs/operators';
 
 interface SolicitudModel {
   nombre: string;
   telefono: string;
+  correo: string;
   contexto: string;
+  tipoNegocio: 1 | 2; // 1 = Alojamiento, 2 = Gastronomia
 }
 
 @Component({
@@ -21,22 +25,50 @@ export class OferenteSolicitudComponent {
   model: SolicitudModel = {
     nombre: '',
     telefono: '',
-    contexto: ''
+    correo: '',
+    contexto: '',
+    tipoNegocio: 1
   };
 
   isSubmitting = false;
 
-  constructor(private toast: ToastService) {}
+  private toast = inject(ToastService);
+  private adminService = inject(AdminOferentesService);
+  private router = inject(Router);
 
   submit(form: NgForm) {
     if (form.invalid || this.isSubmitting) return;
     this.isSubmitting = true;
 
-    // Simulate async submission
-    setTimeout(() => {
-      this.toast.success('Solicitud enviada. Te contactaremos pronto.');
-      form.resetForm();
-      this.isSubmitting = false;
-    }, 800);
+    const payload = {
+      nombreSolicitante: this.model.nombre,
+      telefono: this.model.telefono,
+      mensaje: this.model.contexto,
+      tipoSolicitado: this.model.tipoNegocio,
+      nombreNegocio: this.model.nombre,
+      correo: this.model.correo
+    };
+
+    this.adminService.crearSolicitud(payload).pipe(first()).subscribe({
+      next: () => {
+        this.toast.success('Solicitud enviada exitosamente. Te contactaremos pronto.');
+        form.resetForm();
+        this.model = {
+          nombre: '',
+          telefono: '',
+          correo: '',
+          contexto: '',
+          tipoNegocio: 1
+        };
+        this.isSubmitting = false;
+        // Redirigir al login después de 2 segundos
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+      },
+      error: (err) => {
+        console.error('Error al enviar solicitud:', err);
+        this.toast.error('Error al enviar la solicitud. Intenta nuevamente.');
+        this.isSubmitting = false;
+      }
+    });
   }
 }
