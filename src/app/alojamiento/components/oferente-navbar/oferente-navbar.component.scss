@@ -56,6 +56,30 @@
   border-bottom-color: #c73619;
 }
 
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.cambiar-experiencia {
+  text-decoration: none;
+  color: #1c66d6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 2px solid #1c66d6;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cambiar-experiencia:hover {
+  background: #1c66d6;
+  color: #fff;
+}
+
 .logout {
   text-decoration: none;
   color: #dc2626;
@@ -81,5 +105,15 @@
     order: 3;
     width: 100%;
     gap: 1rem;
+  }
+
+  .navbar-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .cambiar-experiencia {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
   }
 }
