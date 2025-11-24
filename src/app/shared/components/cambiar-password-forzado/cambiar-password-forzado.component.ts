@@ -48,15 +48,20 @@ export class CambiarPasswordForzadoComponent {
       passwordNueva: this.passwordNueva
     }).pipe(first()).subscribe({
       next: () => {
-        this.toast.success('Contraseña actualizada exitosamente');
+        this.toast.success('Contraseña actualizada exitosamente. Por favor, inicia sesión nuevamente.');
         this.submitting = false;
         
-        // Redirigir según el rol
+        // Cerrar sesión para forzar nuevo login con token actualizado
+        this.auth.logout();
+        
+        // Redirigir al login según el rol
         const roles = this.auth.getRoles();
         if (roles.some(r => /oferente/i.test(r))) {
-          this.router.navigate(['/oferente/home']);
+          setTimeout(() => this.router.navigate(['/oferente/login']), 1500);
+        } else if (roles.some(r => /admin/i.test(r))) {
+          setTimeout(() => this.router.navigate(['/admin/login']), 1500);
         } else {
-          this.router.navigate(['/']);
+          setTimeout(() => this.router.navigate(['/cliente/login']), 1500);
         }
       },
       error: (err) => {
