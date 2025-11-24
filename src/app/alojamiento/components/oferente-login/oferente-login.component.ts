@@ -35,24 +35,8 @@ export class OferenteLoginComponent {
         if (roles.some(r => /admin/i.test(r))) {
           this.router.navigate(['/admin/home']);
         } else if (roles.some(r => /oferente/i.test(r))) {
-          // Detectar tipo de negocio para oferentes
-          const tipoNegocio = this.auth.getTipoNegocio();
-          console.log('🔍 Tipo de negocio detectado:', tipoNegocio);
-          
-          if (tipoNegocio === 2) { // TipoOferente.Gastronomia
-            console.log('➡️ Redirigiendo a gastronomía');
-            this.router.navigate(['/oferente/gastronomia/dashboard']);
-          } else if (tipoNegocio === 1) { // TipoOferente.Alojamiento
-            console.log('➡️ Redirigiendo a alojamiento');
-            this.router.navigate(['/oferente/dashboard']);
-          } else if (tipoNegocio === 3) { // TipoOferente.Ambos - mostrar selector
-            console.log('➡️ Redirigiendo al selector (Ambos)');
-            this.router.navigate(['/oferente/home']);
-          } else {
-            // Si no tiene tipo definido (null/undefined), llevar al selector
-            console.log('➡️ Redirigiendo al selector (sin tipo)');
-            this.router.navigate(['/oferente/home']);
-          }
+          // Siempre redirigir al selector de módulos para oferentes
+          this.router.navigate(['/oferente/home']);
         } else {
           this.router.navigate(['/cliente/home']);
         }

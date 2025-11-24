@@ -36,7 +36,7 @@ export class AdminLoginComponent {
         if (roles.some(r => /admin/i.test(r))) {
           this.router.navigate(['/admin/home']);
         } else if (roles.some(r => /oferente/i.test(r))) {
-          this.router.navigate(['/oferente/dashboard']);
+          this.router.navigate(['/oferente/home']);
         } else {
           this.router.navigate(['/cliente/home']);
         }
