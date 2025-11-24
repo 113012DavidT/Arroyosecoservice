@@ -89,7 +89,7 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     }
     
     const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&libraries=places&language=es';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA-bZ8_5tI3fv7nS77icjrpQrQiWPnMf8k&libraries=places&language=es';
     script.async = true;
     script.defer = true;
     script.onload = () => this.initAutocomplete();
