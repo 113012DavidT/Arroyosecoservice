@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { first } from 'rxjs/operators';
+import { GOOGLE_MAPS_CONFIG } from '../../../config/maps.config';
 
 interface AlojamientoForm {
   nombre: string;
@@ -54,9 +55,7 @@ export class FormRegistroAlojamientoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Cargar Google Maps API
-    this.loadGoogleMapsScript();
-    
+    // Ya no cargamos Google Maps - usamos campos simples
     if (this.idEdicion) {
       const id = parseInt(this.idEdicion, 10);
       if (id) {
@@ -89,7 +88,7 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     }
     
     const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA-bZ8_5tI3fv7nS77icjrpQrQiWPnMf8k&libraries=places&language=es&v=weekly';
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&libraries=${GOOGLE_MAPS_CONFIG.libraries.join(',')}&language=${GOOGLE_MAPS_CONFIG.language}&v=weekly`;
     script.async = true;
     script.defer = true;
     script.onload = () => this.initAutocomplete();

@@ -46,6 +46,9 @@ yarn-error.log*
 /.env.test.local
 /.env.production.local
 
+# Configuración sensible - NO SUBIR A GITHUB
+src/app/config/maps.config.ts
+
 # Archivos de editor
 /.idea
 /.vscode
