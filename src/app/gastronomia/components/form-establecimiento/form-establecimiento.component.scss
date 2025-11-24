@@ -85,3 +85,21 @@
     }
   }
 }
+
+.hint {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  
+  &.success {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  &.warning {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+}

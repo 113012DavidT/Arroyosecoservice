@@ -113,4 +113,13 @@ export class DetalleGastronomiaComponent implements OnInit {
     this.numeroPersonas = 2;
     this.mesaId = null;
   }
+
+  abrirComoLlegar() {
+    if (!this.establecimiento?.latitud || !this.establecimiento?.longitud) {
+      this.toast.error('No hay coordenadas disponibles para este restaurante');
+      return;
+    }
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${this.establecimiento.latitud},${this.establecimiento.longitud}`;
+    window.open(url, '_blank');
+  }
 }

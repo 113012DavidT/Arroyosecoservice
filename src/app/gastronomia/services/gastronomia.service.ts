@@ -12,6 +12,8 @@ export interface EstablecimientoDto {
   fotoPrincipal?: string;
   estado?: string;
   direccion?: string;
+  latitud?: number | null;
+  longitud?: number | null;
   menus?: MenuDto[];
   mesas?: MesaDto[];
 }

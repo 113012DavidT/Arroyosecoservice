@@ -8,6 +8,12 @@
       <h1>{{ establecimiento.nombre }}</h1>
       <p class="ubicacion">📍 {{ establecimiento.ubicacion }}</p>
       <p class="descripcion">{{ establecimiento.descripcion }}</p>
+      <button 
+        *ngIf="establecimiento.latitud && establecimiento.longitud" 
+        class="btn-como-llegar" 
+        (click)="abrirComoLlegar()">
+        📍 Cómo llegar
+      </button>
     </div>
   </div>
 

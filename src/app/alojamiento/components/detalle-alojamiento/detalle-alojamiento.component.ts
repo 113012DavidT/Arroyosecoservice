@@ -162,4 +162,13 @@ export class DetalleAlojamientoComponent implements OnInit {
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}T00:00:00`;
   }
+
+  abrirComoLlegar() {
+    if (!this.alojamiento?.latitud || !this.alojamiento?.longitud) {
+      this.toast.error('No hay coordenadas disponibles para este alojamiento');
+      return;
+    }
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${this.alojamiento.latitud},${this.alojamiento.longitud}`;
+    window.open(url, '_blank');
+  }
 }

@@ -5,12 +5,17 @@
 
 	<div class="content">
 		<div class="main">
-			<h1>Cabaña Sierra Verde</h1>
-			<p class="meta">Arroyo Seco, Qro • ★ 4.7</p>
+			<h1>{{ alojamiento?.nombre || 'Cabaña Sierra Verde' }}</h1>
+			<p class="meta">{{ alojamiento?.ubicacion || 'Arroyo Seco, Qro' }} • ★ 4.7</p>
 			<p>
-				Acogedora cabaña rodeada de naturaleza, perfecta para desconectarte y disfrutar de la sierra.
-				A pocos minutos del río y de senderos para explorar.
+				{{ alojamiento?.descripcion || 'Acogedora cabaña rodeada de naturaleza, perfecta para desconectarte y disfrutar de la sierra. A pocos minutos del río y de senderos para explorar.' }}
 			</p>
+			<button 
+				*ngIf="alojamiento?.latitud && alojamiento?.longitud" 
+				class="btn-como-llegar" 
+				(click)="abrirComoLlegar()">
+				📍 Cómo llegar
+			</button>
 		</div>
 
 				<aside class="booking" *ngIf="alojamiento">

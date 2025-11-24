@@ -6,6 +6,8 @@ import { GastronomiaService, EstablecimientoDto } from '../../services/gastronom
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
 
+declare const google: any;
+
 @Component({
   selector: 'app-form-establecimiento',
   standalone: true,
@@ -32,11 +34,44 @@ export class FormEstablecimientoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadGoogleMapsScript();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
       this.loadEstablecimiento(Number(id));
     }
+  }
+
+  private loadGoogleMapsScript() {
+    if (typeof google !== 'undefined' && google.maps) {
+      this.initAutocomplete();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&libraries=places&language=es';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => this.initAutocomplete();
+    document.head.appendChild(script);
+  }
+
+  private initAutocomplete() {
+    setTimeout(() => {
+      const input = document.getElementById('autocomplete-input-gastro') as HTMLInputElement;
+      if (!input) return;
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        componentRestrictions: { country: 'mx' }
+      });
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) return;
+        this.establecimiento.latitud = place.geometry.location.lat();
+        this.establecimiento.longitud = place.geometry.location.lng();
+        this.establecimiento.direccion = place.formatted_address || '';
+        this.toast.success('✓ Coordenadas capturadas automáticamente');
+      });
+    }, 500);
   }
 
   private loadEstablecimiento(id: number) {
@@ -54,6 +89,11 @@ export class FormEstablecimientoComponent implements OnInit {
   submit() {
     if (!this.establecimiento.nombre || !this.establecimiento.ubicacion) {
       this.toast.error('Completa los campos obligatorios');
+      return;
+    }
+
+    if (!this.establecimiento.latitud || !this.establecimiento.longitud) {
+      this.toast.error('Por favor selecciona una dirección del autocompletado para capturar las coordenadas');
       return;
     }
 
