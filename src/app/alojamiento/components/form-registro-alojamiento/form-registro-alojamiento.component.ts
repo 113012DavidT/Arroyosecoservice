@@ -81,58 +81,6 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     }
   }
   
-  loadGoogleMapsScript() {
-    if ((window as any).google) {
-      this.initAutocomplete();
-      return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&libraries=${GOOGLE_MAPS_CONFIG.libraries.join(',')}&language=${GOOGLE_MAPS_CONFIG.language}&v=weekly`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => this.initAutocomplete();
-    script.onerror = () => {
-      console.warn('Google Maps no se pudo cargar, continuando sin autocompletado');
-      this.toastService.error('Autocompletado no disponible, ingresa la ubicación manualmente');
-    };
-    document.head.appendChild(script);
-  }
-  
-  initAutocomplete() {
-    setTimeout(() => {
-      const input = document.getElementById('autocomplete-input') as HTMLInputElement;
-      if (!input) return;
-      
-      const autocomplete = new (window as any).google.maps.places.Autocomplete(input, {
-        types: ['address'],
-        componentRestrictions: { country: 'mx' }
-      });
-      
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        
-        if (place.geometry && place.geometry.location) {
-          this.formModel.latitud = place.geometry.location.lat();
-          this.formModel.longitud = place.geometry.location.lng();
-          this.formModel.direccion = place.formatted_address || '';
-          this.formModel.ubicacion = place.formatted_address || '';
-          this.busquedaDireccion = place.formatted_address || '';
-          
-          console.log('📍 Ubicación seleccionada:', {
-            direccion: this.formModel.direccion,
-            lat: this.formModel.latitud,
-            lng: this.formModel.longitud
-          });
-          
-          this.toastService.success('Ubicación capturada correctamente');
-        }
-      });
-      
-      this.autocomplete = autocomplete;
-    }, 500);
-  }
-
   get modoTitulo(): string {
     return this.idEdicion ? 'Editar Alojamiento' : 'Agregar Alojamiento';
   }

@@ -27,8 +27,8 @@
     <div class="form-group" style="grid-column: span 2;">
       <label>📍 Marcar en el mapa (opcional pero recomendado)</label>
       <app-map-picker 
-        [latitud]="establecimiento.latitud" 
-        [longitud]="establecimiento.longitud"
+        [latitud]="establecimiento.latitud ?? null" 
+        [longitud]="establecimiento.longitud ?? null"
         (locationSelected)="onLocationSelected($event)">
       </app-map-picker>
     </div>
