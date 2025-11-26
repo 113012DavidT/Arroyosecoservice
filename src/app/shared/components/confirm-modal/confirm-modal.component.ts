@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class ConfirmModalComponent implements OnInit {
   private modalService = inject(ConfirmModalService);
-  modal$: Observable<ConfirmModalData | null>;
+  modal$: Observable<ConfirmModalData | null> = null!;
 
   ngOnInit(): void {
     this.modal$ = this.modalService.modal$;
