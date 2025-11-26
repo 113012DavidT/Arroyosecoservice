@@ -26,6 +26,7 @@ import { ClienteFavoritosComponent } from './alojamiento/components/cliente-favo
 import { HomeSelectorComponent } from './shared/components/home-selector/home-selector.component';
 import { AdminHomeSelectorComponent } from './shared/components/admin-home-selector/admin-home-selector.component';
 import { OferenteHomeSelectorComponent } from './shared/components/oferente-home-selector/oferente-home-selector.component';
+import { PublicLayoutComponent } from './shared/components/public-layout/public-layout.component';
 // Gastronomía imports
 import { ClienteLayoutGastronomiaComponent } from './gastronomia/components/cliente-layout-gastronomia/cliente-layout-gastronomia.component';
 import { ListaGastronomiaComponent } from './gastronomia/components/lista-gastronomia/lista-gastronomia.component';
@@ -46,6 +47,50 @@ import { cambioPasswordGuard } from './core/guards/cambio-password.guard';
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
   { path: 'cambiar-password', component: CambiarPasswordForzadoComponent },
+  
+  // Rutas públicas - sin autenticación
+  {
+    path: 'publica',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: 'alojamientos',
+        component: ListaAlojamientosComponent,
+        data: {
+          heroTitle: 'Encuentra tu hospedaje ideal',
+          heroSubtitle: 'Explora opciones en Arroyo Seco y sus alrededores.',
+          heroImage: 'assets/images/hero-dashboard.svg'
+        }
+      },
+      {
+        path: 'alojamientos/:id',
+        component: DetalleAlojamientoComponent,
+        data: {
+          heroTitle: 'Detalles del alojamiento',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      {
+        path: 'gastronomia',
+        component: ListaGastronomiaComponent,
+        data: {
+          heroTitle: 'Descubre la gastronomía local',
+          heroSubtitle: 'Explora restaurantes en Arroyo Seco.',
+          heroImage: 'assets/images/hero-dashboard.svg'
+        }
+      },
+      {
+        path: 'gastronomia/:id',
+        component: DetalleGastronomiaComponent,
+        data: {
+          heroTitle: 'Detalles del restaurante',
+          heroImage: 'assets/images/hero-oferentes.svg'
+        }
+      },
+      { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
+    ]
+  },
+
   {
     path: 'admin',
     children: [
@@ -434,6 +479,6 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
+  { path: '', redirectTo: 'publica/alojamientos', pathMatch: 'full' },
+  { path: '**', redirectTo: 'publica/alojamientos' }
 ];

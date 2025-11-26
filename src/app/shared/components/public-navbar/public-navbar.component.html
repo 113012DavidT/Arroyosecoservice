@@ -1,0 +1,31 @@
+<nav class="public-navbar">
+  <div class="navbar-container">
+    <!-- Logo/Brand -->
+    <div class="navbar-brand">
+      <h2>🏔️ Arroyo Seco</h2>
+    </div>
+
+    <!-- Experiencia Selector -->
+    <div class="experience-switcher">
+      <button 
+        [class.active]="experienceType === 'alojamiento'"
+        (click)="switchExperience('alojamiento')"
+        class="exp-btn">
+        🏨 Alojamientos
+      </button>
+      <button 
+        [class.active]="experienceType === 'gastronomia'"
+        (click)="switchExperience('gastronomia')"
+        class="exp-btn">
+        🍽️ Gastronomía
+      </button>
+    </div>
+
+    <!-- Login Button -->
+    <div class="navbar-actions">
+      <button class="btn-login" (click)="goToLogin()">
+        Iniciar Sesión
+      </button>
+    </div>
+  </div>
+</nav>

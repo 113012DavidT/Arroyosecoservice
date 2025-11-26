@@ -8,7 +8,7 @@
 </div>
 
 <section class="grid">
-		<a class="card" *ngFor="let a of filtered" [routerLink]="['/cliente/alojamientos', a.id]">
+		<a class="card" *ngFor="let a of filtered" (click)="navigateToDetail(a.id)" style="cursor: pointer;">
 		<div class="thumb" [style.background-image]="'url(' + a.imagen + ')'"> </div>
 		<div class="info">
 			<h3>{{ a.nombre }}</h3>

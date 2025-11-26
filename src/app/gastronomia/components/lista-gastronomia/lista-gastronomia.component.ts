@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
 
 interface Establecimiento {
@@ -27,13 +28,18 @@ export class ListaGastronomiaComponent implements OnInit {
   establecimientos: Establecimiento[] = [];
   loading = false;
   error: string | null = null;
+  isPublic = false;
 
   constructor(
     private toast: ToastService,
-    private gastronomiaService: GastronomiaService
+    private gastronomiaService: GastronomiaService,
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    // Detectar si estamos en ruta pública
+    this.isPublic = this.router.url.includes('/publica/');
     this.fetchEstablecimientos();
   }
 
@@ -73,5 +79,16 @@ export class ListaGastronomiaComponent implements OnInit {
         break;
     }
     return result;
+  }
+
+  navigateToDetail(id: number) {
+    if (this.isPublic && !this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión para ver detalles');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    const route = this.isPublic ? '/publica/gastronomia' : '/cliente/gastronomia';
+    this.router.navigate([route, id]);
   }
 }

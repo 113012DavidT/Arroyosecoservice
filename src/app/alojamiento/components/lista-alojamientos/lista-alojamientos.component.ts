@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FavoritesService, FavoriteAlojamiento } from '../../../shared/services/favorites.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
 
 interface Alojamiento {
@@ -29,12 +30,18 @@ export class ListaAlojamientosComponent implements OnInit {
   alojamientos: Alojamiento[] = [];
   loading = false;
   error: string | null = null;
+  isPublic = false;
 
   constructor(private favs: FavoritesService,
               private toast: ToastService,
-              private alojamientosService: AlojamientoService) {}
+              private alojamientosService: AlojamientoService,
+              private auth: AuthService,
+              private router: Router,
+              private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    // Detectar si estamos en ruta pública
+    this.isPublic = this.router.url.includes('/publica/');
     this.fetchAlojamientos();
   }
 
@@ -90,5 +97,16 @@ export class ListaAlojamientosComponent implements OnInit {
     const wasFav = this.isFavorite(a.id);
     this.favs.toggle(a as FavoriteAlojamiento);
     this.toast.info(!wasFav ? 'Añadido a favoritos' : 'Eliminado de favoritos');
+  }
+
+  navigateToDetail(id: number) {
+    if (this.isPublic && !this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión para ver detalles');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    const route = this.isPublic ? '/publica/alojamientos' : '/cliente/alojamientos';
+    this.router.navigate([route, id]);
   }
 }
