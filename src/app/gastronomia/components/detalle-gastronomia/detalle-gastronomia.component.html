@@ -45,7 +45,7 @@
   <ng-template #loginAviso>
     <div class="login-aviso">
       <p>Estás en vista pública. Para reservar debes iniciar sesión.</p>
-      <a routerLink="/login" [queryParams]="{ returnUrl: '/cliente/gastronomia/' + (establecimiento?.id || '') }" class="btn-login-aviso">Iniciar sesión</a>
+      <a routerLink="/login" [queryParams]="{ returnUrl: '/cliente/gastronomia/' + establecimiento.id }" class="btn-login-aviso">Iniciar sesión</a>
     </div>
   </ng-template>
 
