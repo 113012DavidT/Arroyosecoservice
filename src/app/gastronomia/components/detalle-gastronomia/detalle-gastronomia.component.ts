@@ -95,6 +95,7 @@ export class DetalleGastronomiaComponent implements OnInit {
       mesaId: this.mesaId || null
     };
 
+    console.log('Enviando reserva con payload:', payload);
     this.reservasService.crear(payload)
       .pipe(first())
       .subscribe({
