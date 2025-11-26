@@ -75,7 +75,7 @@ export class DetalleGastronomiaComponent implements OnInit {
   toggleReservaForm() {
     if (!this.auth.isAuthenticated()) {
       this.toast.error('Debes iniciar sesión para hacer una reserva');
-      this.router.navigate(['/cliente/login']);
+      this.router.navigate(['/login']);
       return;
     }
     this.showReservaForm = !this.showReservaForm;
