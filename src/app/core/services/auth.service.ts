@@ -30,7 +30,31 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    const payload = this.decodeJwt(token);
+    if (!payload) {
+      this.logout();
+      return false;
+    }
+    // Verificar expiración (claim estándar "exp")
+    const expClaimNames = ['exp', 'EXP', 'Exp'];
+    let expValue: number | null = null;
+    for (const key of expClaimNames) {
+      if (payload[key]) {
+        expValue = Number(payload[key]);
+        break;
+      }
+    }
+    if (expValue && !isNaN(expValue)) {
+      const nowSeconds = Date.now() / 1000;
+      if (nowSeconds >= expValue) {
+        // Token expirado
+        this.logout();
+        return false;
+      }
+    }
+    return true;
   }
 
   logout() {
