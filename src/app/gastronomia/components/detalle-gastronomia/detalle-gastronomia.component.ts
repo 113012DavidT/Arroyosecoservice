@@ -82,6 +82,11 @@ export class DetalleGastronomiaComponent implements OnInit {
   }
 
   crearReserva() {
+    if (!this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión para hacer una reserva');
+      this.router.navigate(['/login']);
+      return;
+    }
     if (!this.establecimiento?.id) return;
     
     if (!this.fecha || !this.numeroPersonas) {

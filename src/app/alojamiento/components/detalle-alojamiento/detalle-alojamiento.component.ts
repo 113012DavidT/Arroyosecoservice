@@ -2,9 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { ReservasService } from '../../services/reservas.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { first, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -21,7 +22,9 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class DetalleAlojamientoComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private toast = inject(ToastService);
+  private auth = inject(AuthService);
   private alojamientosService = inject(AlojamientoService);
   private reservasService = inject(ReservasService);
 
@@ -91,6 +94,11 @@ export class DetalleAlojamientoComponent implements OnInit {
   }
 
   abrirModalPago(form: NgForm) {
+    if (!this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión para hacer una reserva');
+      this.router.navigate(['/login']);
+      return;
+    }
     if (form.invalid || !this.total) return;
     this.showPagoModal = true;
   }
