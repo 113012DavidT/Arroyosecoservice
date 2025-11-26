@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { ReservasService } from '../../services/reservas.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-detalle-alojamiento',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule],
   templateUrl: './detalle-alojamiento.component.html',
   styleUrl: './detalle-alojamiento.component.scss'
 })
