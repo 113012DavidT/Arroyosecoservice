@@ -18,16 +18,16 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(reqToSend).pipe(
     catchError((error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error.status, error.url, error.error);
+      
       // If unauthorized on a protected call, clear token and redirect to appropriate login
-      // BUT: Solo hacer logout en 401 si es una petición de acceso denegado real,
-      // no si es por expiración del token o errores temporales
+      // BUT: No hacer logout en POST de creación de reservas (podría ser error del backend, no de auth)
       if (error.status === 401 && !isAuthEndpoint && token) {
-        // Verificar que sea un error de autenticación real (no de datos inválidos)
-        const isRealAuthError = error.error?.message?.toLowerCase().includes('unauthorized') ||
-                                error.error?.message?.toLowerCase().includes('token') ||
-                                !error.error?.message;
+        const isReservationEndpoint = /\/(reservas|reservasGastronomia)/i.test(req.url) && req.method === 'POST';
         
-        if (isRealAuthError) {
+        // Si NO es un endpoint de reserva, hacer logout
+        if (!isReservationEndpoint) {
+          console.warn('Logout automático por 401');
           auth.logout();
           const url = req.url.toLowerCase();
           if (url.includes('/admin/')) {
@@ -37,6 +37,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           } else {
             router.navigateByUrl('/cliente/login');
           }
+        } else {
+          console.warn('401 en endpoint de reserva - no hacer logout automático');
         }
       }
       return throwError(() => error);

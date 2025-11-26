@@ -100,6 +100,7 @@ export class DetalleGastronomiaComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (result) => {
+          console.log('Reserva de gastronomía creada exitosamente:', result);
           this.toast.success('¡Reserva creada exitosamente!');
           this.showReservaForm = false;
           this.resetForm();
@@ -110,7 +111,7 @@ export class DetalleGastronomiaComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Error al crear reserva:', err);
+          console.error('Error al crear reserva de gastronomía:', err);
           this.toast.error(err?.error?.message || 'Error al crear la reserva');
           this.submitting = false;
         }

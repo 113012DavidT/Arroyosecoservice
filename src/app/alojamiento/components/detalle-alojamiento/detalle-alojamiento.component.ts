@@ -138,13 +138,15 @@ export class DetalleAlojamientoComponent implements OnInit {
       first()
     ).subscribe({
       next: () => {
+        console.log('Reserva creada exitosamente');
         this.toast.success('Reserva enviada. Pago en revisión.');
         this.creando = false;
         this.cerrarModalPago();
         this.booking = { entrada: null, salida: null, huespedes: 1 };
         this.cargarCalendario();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al crear reserva:', err);
         this.toast.error('No se pudo procesar la reserva');
         this.creando = false;
       }
