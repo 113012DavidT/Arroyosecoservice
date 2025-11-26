@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-cliente-navbar-gastronomia',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 export class ClienteNavbarGastronomiaComponent {
   menuOpen = false;
 
-  constructor() {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -20,5 +21,11 @@ export class ClienteNavbarGastronomiaComponent {
 
   closeMenu() {
     this.menuOpen = false;
+  }
+
+  logout() {
+    this.menuOpen = false;
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

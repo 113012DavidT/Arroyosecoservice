@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgFor } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface NavLink {
   label: string;
@@ -22,4 +23,11 @@ export class OferenteNavbarComponent {
     { label: 'Notificaciones', route: '/oferente/notificaciones' },
     { label: 'Configuración', route: '/oferente/configuracion' }
   ];
+
+  constructor(private auth: AuthService, private router: Router) {}
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 }

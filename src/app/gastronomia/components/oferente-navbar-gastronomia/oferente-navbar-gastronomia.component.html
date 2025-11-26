@@ -18,12 +18,12 @@
       <a routerLink="/oferente/gastronomia/notificaciones" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Notificaciones</a>
       <a routerLink="/oferente/gastronomia/configuracion" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Configuración</a>
       <a routerLink="/oferente/home" class="cambiar-experiencia mobile-cambiar" (click)="closeMenu()">🔄 Cambiar Experiencia</a>
-      <a routerLink="/login" class="logout mobile-logout" (click)="closeMenu()">Cerrar sesión</a>
+      <a (click)="logout()" class="logout mobile-logout">Cerrar sesión</a>
     </div>
 
     <div class="navbar-actions">
       <a routerLink="/oferente/home" class="cambiar-experiencia desktop-cambiar" title="Cambiar de módulo">🔄 Cambiar Experiencia</a>
-      <a routerLink="/login" class="logout desktop-logout">Cerrar sesión</a>
+      <a (click)="logout()" class="logout desktop-logout">Cerrar sesión</a>
     </div>
   </div>
 </nav>

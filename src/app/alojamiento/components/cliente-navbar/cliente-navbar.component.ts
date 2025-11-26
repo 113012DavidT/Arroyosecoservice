@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FavoritesService } from '../../../shared/services/favorites.service';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-cliente-navbar',
@@ -15,7 +16,12 @@ export class ClienteNavbarComponent {
   count = 0;
   private sub?: any;
 
-  constructor(private favs: FavoritesService) {
+  constructor(private favs: FavoritesService, private auth: AuthService, private router: Router) {
     this.sub = this.favs.favorites$.subscribe(list => this.count = list.length);
+  }
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
