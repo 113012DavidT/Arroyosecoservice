@@ -97,12 +97,9 @@ export class DetalleAlojamientoComponent implements OnInit {
 
   abrirModalPago(form: NgForm) {
     if (this.isPublic) {
-      if (this.auth.isAuthenticated()) {
-        this.router.navigate(['/cliente/alojamientos', this.alojamientoId]);
-      } else {
-        this.toast.error('Debes iniciar sesión para hacer una reserva');
-        this.router.navigate(['/login']);
-      }
+      const returnUrl = `/cliente/alojamientos/${this.alojamientoId}`;
+      this.toast.error('Debes iniciar sesión para hacer una reserva');
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
     if (!this.auth.isAuthenticated()) {

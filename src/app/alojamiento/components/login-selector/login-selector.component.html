@@ -17,6 +17,7 @@
         <a
           *ngFor="let type of userTypes"
           [routerLink]="type.route"
+          [queryParams]="returnUrl ? { returnUrl: returnUrl } : null"
           class="user-card"
           [style.--card-color]="type.color"
         >

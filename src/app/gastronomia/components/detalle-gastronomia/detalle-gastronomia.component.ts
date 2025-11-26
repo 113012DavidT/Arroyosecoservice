@@ -76,13 +76,10 @@ export class DetalleGastronomiaComponent implements OnInit {
 
   toggleReservaForm() {
     if (this.isPublic) {
-      // En vista pública no abrimos formulario
-      if (this.auth.isAuthenticated()) {
-        this.router.navigate(['/cliente/gastronomia', this.establecimiento?.id || '']);
-      } else {
-        this.toast.error('Debes iniciar sesión para hacer una reserva');
-        this.router.navigate(['/login']);
-      }
+      const id = this.establecimiento?.id;
+      const returnUrl = id ? `/cliente/gastronomia/${id}` : '/cliente/gastronomia';
+      this.toast.error('Debes iniciar sesión para hacer una reserva');
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
     if (!this.auth.isAuthenticated()) {
@@ -95,13 +92,10 @@ export class DetalleGastronomiaComponent implements OnInit {
 
   crearReserva() {
     if (this.isPublic) {
-      // En pública nunca crear
-      if (this.auth.isAuthenticated()) {
-        this.router.navigate(['/cliente/gastronomia', this.establecimiento?.id || '']);
-      } else {
-        this.toast.error('Debes iniciar sesión para hacer una reserva');
-        this.router.navigate(['/login']);
-      }
+      const id = this.establecimiento?.id;
+      const returnUrl = id ? `/cliente/gastronomia/${id}` : '/cliente/gastronomia';
+      this.toast.error('Debes iniciar sesión para hacer una reserva');
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
     if (!this.auth.isAuthenticated()) {

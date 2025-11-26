@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 interface UserType {
@@ -18,6 +18,7 @@ interface UserType {
   styleUrl: './login-selector.component.scss'
 })
 export class LoginSelectorComponent {
+  returnUrl: string | null = null;
   readonly userTypes: UserType[] = [
     {
       title: 'Administrador',
@@ -41,4 +42,9 @@ export class LoginSelectorComponent {
       color: '#0891b2'
     }
   ];
+
+  constructor(private route: ActivatedRoute, private router: Router) {
+    const ru = this.route.snapshot.queryParamMap.get('returnUrl');
+    this.returnUrl = ru && ru.trim().length > 0 ? ru : null;
+  }
 }

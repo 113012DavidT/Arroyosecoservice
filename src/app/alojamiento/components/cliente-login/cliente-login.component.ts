@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -13,11 +13,25 @@ import { first } from 'rxjs/operators';
   templateUrl: './cliente-login.component.html',
   styleUrls: ['./cliente-login.component.scss']
 })
-export class ClienteLoginComponent {
+export class ClienteLoginComponent implements OnInit {
   model = { email: '', password: '' };
   loading = false;
+  private returnUrl: string | null = null;
 
-  constructor(private toast: ToastService, private router: Router, private auth: AuthService) {}
+  constructor(private toast: ToastService, private router: Router, private auth: AuthService, private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    const ru = this.route.snapshot.queryParamMap.get('returnUrl');
+    this.returnUrl = ru && ru.trim().length > 0 ? ru : null;
+    // Si ya está autenticado, redirigir directo
+    if (this.auth.isAuthenticated()) {
+      if (this.returnUrl) {
+        this.router.navigateByUrl(this.returnUrl);
+      } else {
+        this.router.navigate(['/cliente/home']);
+      }
+    }
+  }
 
   submit(form: NgForm) {
     if (form.invalid || this.loading) return;
@@ -26,6 +40,11 @@ export class ClienteLoginComponent {
       next: () => {
         this.toast.show('Inicio de sesión exitoso', 'success');
         this.loading = false;
+        // Redirigir a returnUrl si existe
+        if (this.returnUrl) {
+          this.router.navigateByUrl(this.returnUrl);
+          return;
+        }
         // Detectar rol y redirigir
         const roles = this.auth.getRoles();
         if (roles.some(r => /admin/i.test(r))) {

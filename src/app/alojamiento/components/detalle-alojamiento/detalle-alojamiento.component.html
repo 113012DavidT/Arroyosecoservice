@@ -53,9 +53,9 @@
 						</form>
 					</div>
 					<ng-template #irCliente>
-						<div *ngIf="autenticado && isPublic" class="login-aviso">
-							<p>Estás en vista pública. Ve a la vista de cliente para reservar.</p>
-							<a [routerLink]="['/cliente/alojamientos', alojamientoId]" class="btn-login-aviso">Ir a reservar</a>
+						<div *ngIf="isPublic" class="login-aviso">
+							<p>Estás en vista pública. Para reservar debes iniciar sesión.</p>
+							<a routerLink="/login" [queryParams]="{ returnUrl: '/cliente/alojamientos/' + alojamientoId }" class="btn-login-aviso">Iniciar sesión</a>
 						</div>
 					</ng-template>
 				</aside>
