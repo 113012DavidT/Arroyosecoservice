@@ -23,11 +23,12 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       // If unauthorized on a protected call, clear token and redirect to appropriate login
       // BUT: No hacer logout en POST de creación de reservas (podría ser error del backend, no de auth)
       if (error.status === 401 && !isAuthEndpoint && token) {
+        // Detectar endpoints de reservas (case-insensitive)
         const isReservationEndpoint = /\/(reservas|reservasGastronomia)/i.test(req.url) && req.method === 'POST';
         
         // Si NO es un endpoint de reserva, hacer logout
         if (!isReservationEndpoint) {
-          console.warn('Logout automático por 401');
+          console.warn('Logout automático por 401 en:', req.url);
           auth.logout();
           const url = req.url.toLowerCase();
           if (url.includes('/admin/')) {
@@ -38,7 +39,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/cliente/login');
           }
         } else {
-          console.warn('401 en endpoint de reserva - no hacer logout automático');
+          console.warn('401 en endpoint de reserva - no hacer logout automático:', req.url);
         }
       }
       return throwError(() => error);

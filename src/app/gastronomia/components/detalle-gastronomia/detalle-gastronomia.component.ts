@@ -49,6 +49,8 @@ export class DetalleGastronomiaComponent implements OnInit {
     this.loading = true;
     this.gastronomiaService.getById(id).pipe(first()).subscribe({
       next: (data) => {
+        console.log('Establecimiento cargado:', data);
+        console.log('Mesas disponibles:', data?.mesas);
         this.establecimiento = data;
         this.loading = false;
       },
