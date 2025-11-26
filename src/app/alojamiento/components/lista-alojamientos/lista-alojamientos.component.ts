@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FavoritesService, FavoriteAlojamiento } from '../../../shared/services/favorites.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -20,7 +20,7 @@ interface Alojamiento {
 @Component({
   selector: 'app-lista-alojamientos',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './lista-alojamientos.component.html',
   styleUrl: './lista-alojamientos.component.scss'
 })

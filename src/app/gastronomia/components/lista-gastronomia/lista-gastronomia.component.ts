@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
@@ -18,7 +18,7 @@ interface Establecimiento {
 @Component({
   selector: 'app-lista-gastronomia',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './lista-gastronomia.component.html',
   styleUrl: './lista-gastronomia.component.scss'
 })

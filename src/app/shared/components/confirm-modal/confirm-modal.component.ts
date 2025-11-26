@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConfirmModalService, ConfirmModalData } from '../services/confirm-modal.service';
+import { ConfirmModalService, ConfirmModalData } from '../../services/confirm-modal.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,13 +11,12 @@ import { Observable } from 'rxjs';
   styleUrl: './confirm-modal.component.scss'
 })
 export class ConfirmModalComponent implements OnInit {
+  private modalService = inject(ConfirmModalService);
   modal$: Observable<ConfirmModalData | null>;
 
-  constructor(private modalService: ConfirmModalService) {
-    this.modal$ = modalService.modal$;
+  ngOnInit(): void {
+    this.modal$ = this.modalService.modal$;
   }
-
-  ngOnInit(): void {}
 
   confirm() {
     this.modalService.resolve(true);
