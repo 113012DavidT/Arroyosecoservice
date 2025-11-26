@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GastronomiaService, EstablecimientoDto, MenuDto } from '../../services/gastronomia.service';
+import { ReservasGastronomiaService } from '../../services/reservas-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
@@ -31,6 +32,7 @@ export class DetalleGastronomiaComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private gastronomiaService: GastronomiaService,
+    private reservasService: ReservasGastronomiaService,
     private toast: ToastService,
     private auth: AuthService
   ) {}
@@ -87,21 +89,27 @@ export class DetalleGastronomiaComponent implements OnInit {
 
     this.submitting = true;
     const payload = {
-      fecha: this.fecha,
+      establecimientoId: this.establecimiento.id,
+      fecha: new Date(this.fecha).toISOString(),
       numeroPersonas: this.numeroPersonas,
-      mesaId: this.mesaId || undefined
+      mesaId: this.mesaId || null
     };
 
-    this.gastronomiaService.createReserva(this.establecimiento.id, payload)
+    this.reservasService.crear(payload)
       .pipe(first())
       .subscribe({
-        next: () => {
+        next: (result) => {
           this.toast.success('¡Reserva creada exitosamente!');
           this.showReservaForm = false;
           this.resetForm();
           this.submitting = false;
+          // Redirigir a la página de reserva creada
+          if (result?.id) {
+            this.router.navigate(['/cliente/gastronomia/reserva', result.id]);
+          }
         },
         error: (err) => {
+          console.error('Error al crear reserva:', err);
           this.toast.error(err?.error?.message || 'Error al crear la reserva');
           this.submitting = false;
         }

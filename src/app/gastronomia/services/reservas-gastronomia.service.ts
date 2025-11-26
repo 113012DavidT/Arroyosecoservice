@@ -20,6 +20,16 @@ export interface ReservaGastronomiaDto {
 export class ReservasGastronomiaService {
   private readonly api = inject(ApiService);
 
+  /** Crear nueva reserva */
+  crear(payload: { establecimientoId: number; fecha: string; numeroPersonas: number; mesaId?: number | null }): Observable<any> {
+    return this.api.post('/ReservasGastronomia', payload);
+  }
+
+  /** Obtener reserva por ID */
+  getById(id: number): Observable<ReservaGastronomiaDto> {
+    return this.api.get<ReservaGastronomiaDto>(`/ReservasGastronomia/${id}`);
+  }
+
   /** Listar reservas del cliente autenticado */
   listByCliente(clienteId: string): Observable<ReservaGastronomiaDto[]> {
     return this.api.get<ReservaGastronomiaDto[]>(`/ReservasGastronomia/cliente/${clienteId}`);
