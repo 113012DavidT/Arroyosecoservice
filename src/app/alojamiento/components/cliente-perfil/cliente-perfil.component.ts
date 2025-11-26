@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
 interface Perfil {
   nombre: string;
@@ -22,6 +24,8 @@ interface Perfil {
 export class ClientePerfilComponent implements OnInit {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
+  private modalService = inject(ConfirmModalService);
 
   perfil = signal<Perfil>({
     nombre: '',
@@ -56,7 +60,15 @@ export class ClientePerfilComponent implements OnInit {
   }
 
   guardarPerfil() {
-    // Aquí se integraría con el servicio de API
-    this.toastService.show('Perfil actualizado exitosamente', 'success');
+    const { nombre, email, telefono } = this.perfil();
+    this.usuarioService.updatePerfil({ nombre, email, telefono }).subscribe({
+      next: async () => {
+        await this.modalService.confirm({ title: 'Perfil actualizado', message: 'Tus datos han sido guardados correctamente.', confirmText: 'Aceptar' });
+      },
+      error: (err) => {
+        console.error('Error al actualizar perfil:', err);
+        this.toastService.error('No fue posible actualizar tu perfil');
+      }
+    });
   }
 }

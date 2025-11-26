@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
 interface Perfil {
   nombre: string;
@@ -61,6 +63,8 @@ interface Perfil {
 export class OferenteConfiguracionComponent implements OnInit {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
+  private modalService = inject(ConfirmModalService);
 
   perfil: Perfil = {
     nombre: '',
@@ -96,7 +100,15 @@ export class OferenteConfiguracionComponent implements OnInit {
 
   guardar(form: NgForm) {
     if (form.invalid) return;
-    // Simular guardado
-    this.toastService.success('Configuración guardada exitosamente');
+    const { nombre, correo, telefono } = this.perfil;
+    this.usuarioService.updatePerfil({ nombre, email: correo, telefono }).subscribe({
+      next: async () => {
+        await this.modalService.confirm({ title: 'Configuración', message: 'Cambios guardados correctamente.', confirmText: 'Aceptar' });
+      },
+      error: (err) => {
+        console.error('Error al guardar configuración:', err);
+        this.toastService.error('No fue posible guardar los cambios');
+      }
+    });
   }
 }

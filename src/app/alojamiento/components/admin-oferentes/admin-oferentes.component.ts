@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AdminOferentesService, OferenteDto } from '../../services/admin-oferentes.service';
 import { first } from 'rxjs/operators';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
 enum TipoOferente {
   Alojamiento = 1,
@@ -31,6 +32,7 @@ interface Oferente {
 export class AdminOferentesComponent {
   private toastService = inject(ToastService);
   private adminService = inject(AdminOferentesService);
+  private confirmModal = inject(ConfirmModalService);
 
   searchTerm = '';
 
@@ -108,7 +110,7 @@ export class AdminOferentesComponent {
   }
 
   abrirRegistro() {
-    this.nuevo = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente', tipo: TipoOferente.Alojamiento };
+    this.nuevo = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente', tipo: undefined };
     this.modalRegistroAbierto = true;
   }
 
@@ -124,8 +126,12 @@ export class AdminOferentesComponent {
       nombre: this.nuevo.nombre!,
       telefono: this.nuevo.telefono!,
       role: 'Oferente',
-      tipoOferente: TipoOferente.Alojamiento
+      tipoOferente: this.nuevo.tipo
     };
+    if (!payload.tipoOferente) {
+      this.toastService.error('Selecciona el tipo de oferente');
+      return;
+    }
     this.adminService.createUsuarioOferente(payload).pipe(first()).subscribe({
       next: () => {
         this.toastService.success(`Oferente de alojamiento ${this.nuevo.nombre} registrado exitosamente`);
@@ -181,8 +187,14 @@ export class AdminOferentesComponent {
     }
   }
 
-  eliminar(o: Oferente) {
-    const ok = confirm(`¿Eliminar al oferente "${o.nombre}"?`);
+  async eliminar(o: Oferente) {
+    const ok = await this.confirmModal.confirm({
+      title: 'Eliminar oferente',
+      message: `¿Eliminar al oferente "${o.nombre}"?`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      isDangerous: true
+    });
     if (!ok) return;
     this.adminService.delete(o.id).pipe(first()).subscribe({
       next: () => {
