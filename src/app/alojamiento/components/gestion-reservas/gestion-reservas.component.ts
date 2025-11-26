@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { ReservasService, ReservaDto } from '../../services/reservas.service';
 import { first } from 'rxjs/operators';
 import { AlojamientoService } from '../../services/alojamiento.service';
@@ -34,6 +35,7 @@ interface ReservaUI {
 export class GestionReservasComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private modalService = inject(ConfirmModalService);
   private reservasService = inject(ReservasService);
   private alojamientosService = inject(AlojamientoService);
   private userService = inject(UserService);
@@ -196,18 +198,30 @@ export class GestionReservasComponent implements OnInit {
       next: () => {
         this.toastService.success(`Reserva ${reserva.folio || reserva.id} confirmada exitosamente`);
         this.actualizarEstadoLocal(reserva.id, 'Confirmada');
+        this.cerrarDetalle();
       },
       error: () => this.toastService.error('No se pudo confirmar la reserva')
     });
   }
 
   rechazar(reserva: ReservaUI) {
-    this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
-      next: () => {
-        this.toastService.info(`Reserva ${reserva.folio || reserva.id} rechazada`);
-        this.actualizarEstadoLocal(reserva.id, 'Rechazada');
-      },
-      error: () => this.toastService.error('No se pudo rechazar la reserva')
+    this.modalService.confirm({
+      title: '¿Rechazar reserva?',
+      message: `¿Estás seguro de que deseas rechazar la reserva ${reserva.folio || reserva.id}?`,
+      confirmText: 'Sí, rechazar',
+      cancelText: 'Cancelar',
+      isDangerous: true
+    }).then(result => {
+      if (result) {
+        this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
+          next: () => {
+            this.toastService.info(`Reserva ${reserva.folio || reserva.id} rechazada`);
+            this.actualizarEstadoLocal(reserva.id, 'Rechazada');
+            this.cerrarDetalle();
+          },
+          error: () => this.toastService.error('No se pudo rechazar la reserva')
+        });
+      }
     });
   }
 
