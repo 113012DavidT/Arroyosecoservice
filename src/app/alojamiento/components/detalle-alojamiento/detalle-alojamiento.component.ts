@@ -109,6 +109,11 @@ export class DetalleAlojamientoComponent implements OnInit {
     this.comprobanteFile = null;
   }
 
+  // Exponer estado de autenticación al template
+  get autenticado(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
   onComprobanteChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     this.comprobanteFile = input.files?.[0] || null;

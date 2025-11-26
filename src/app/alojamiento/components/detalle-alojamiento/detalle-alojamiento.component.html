@@ -19,6 +19,11 @@
 		</div>
 
 				<aside class="booking" *ngIf="alojamiento">
+					<div class="login-aviso" *ngIf="!autenticado">
+						<p>Inicia sesión para poder reservar.</p>
+						<a routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
+					</div>
+					<div *ngIf="autenticado">
 						<h3>${{ alojamiento.precioPorNoche }} <small>/ noche</small></h3>
 						<form #b="ngForm" (ngSubmit)="abrirModalPago(b)">
 							<mat-form-field appearance="outline">
@@ -46,6 +51,7 @@
 
 							<button type="submit" [disabled]="b.invalid || !total">Reservar ahora</button>
 						</form>
+					</div>
 				</aside>
 	</div>
 </section>

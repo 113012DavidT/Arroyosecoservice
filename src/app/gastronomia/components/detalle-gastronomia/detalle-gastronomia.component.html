@@ -36,15 +36,21 @@
     </div>
   </div>
 
-  <!-- Botón de reserva -->
-  <div class="reserva-section">
+  <!-- Botón / aviso de reserva -->
+  <div class="reserva-section" *ngIf="autenticado; else loginAviso">
     <button class="btn-reservar" (click)="toggleReservaForm()">
       {{ showReservaForm ? 'Cancelar Reserva' : 'Reservar Mesa' }}
     </button>
   </div>
+  <ng-template #loginAviso>
+    <div class="login-aviso">
+      <p>Inicia sesión para reservar una mesa.</p>
+      <a routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
+    </div>
+  </ng-template>
 
   <!-- Formulario de reserva -->
-  <div *ngIf="showReservaForm" class="reserva-form">
+  <div *ngIf="showReservaForm && autenticado" class="reserva-form">
     <h3>Hacer una reserva</h3>
     <div class="form-group">
       <label>Fecha y hora</label>

@@ -139,4 +139,9 @@ export class DetalleGastronomiaComponent implements OnInit {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${this.establecimiento.latitud},${this.establecimiento.longitud}`;
     window.open(url, '_blank');
   }
+
+  // Exponer autenticación al template
+  get autenticado(): boolean {
+    return this.auth.isAuthenticated();
+  }
 }
