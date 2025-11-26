@@ -41,8 +41,10 @@ export class DetalleAlojamientoComponent implements OnInit {
   showPagoModal = false;
   comprobanteFile: File | null = null;
   creando = false;
+  isPublic = false;
 
   ngOnInit(): void {
+    this.isPublic = this.router.url.includes('/publica/');
     const idParam = this.route.snapshot.paramMap.get('id');
     this.alojamientoId = idParam ? parseInt(idParam, 10) : 0;
     if (this.alojamientoId) {
@@ -94,6 +96,15 @@ export class DetalleAlojamientoComponent implements OnInit {
   }
 
   abrirModalPago(form: NgForm) {
+    if (this.isPublic) {
+      if (this.auth.isAuthenticated()) {
+        this.router.navigate(['/cliente/alojamientos', this.alojamientoId]);
+      } else {
+        this.toast.error('Debes iniciar sesión para hacer una reserva');
+        this.router.navigate(['/login']);
+      }
+      return;
+    }
     if (!this.auth.isAuthenticated()) {
       this.toast.error('Debes iniciar sesión para hacer una reserva');
       this.router.navigate(['/login']);

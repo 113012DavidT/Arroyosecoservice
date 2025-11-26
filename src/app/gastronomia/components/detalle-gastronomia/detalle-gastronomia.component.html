@@ -37,20 +37,24 @@
   </div>
 
   <!-- Botón / aviso de reserva -->
-  <div class="reserva-section" *ngIf="autenticado; else loginAviso">
+  <div class="reserva-section" *ngIf="!isPublic && autenticado; else loginAviso">
     <button class="btn-reservar" (click)="toggleReservaForm()">
       {{ showReservaForm ? 'Cancelar Reserva' : 'Reservar Mesa' }}
     </button>
   </div>
   <ng-template #loginAviso>
     <div class="login-aviso">
-      <p>Inicia sesión para reservar una mesa.</p>
-      <a routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
+      <p *ngIf="!autenticado">Inicia sesión para reservar una mesa.</p>
+      <a *ngIf="!autenticado" routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
+      <div *ngIf="autenticado && isPublic">
+        <p>Estás en vista pública. Ve a la vista de cliente para reservar.</p>
+        <a [routerLink]="['/cliente/gastronomia', establecimiento?.id]" class="btn-login-aviso">Ir a reservar</a>
+      </div>
     </div>
   </ng-template>
 
   <!-- Formulario de reserva -->
-  <div *ngIf="showReservaForm && autenticado" class="reserva-form">
+  <div *ngIf="showReservaForm && autenticado && !isPublic" class="reserva-form">
     <h3>Hacer una reserva</h3>
     <div class="form-group">
       <label>Fecha y hora</label>

@@ -20,6 +20,7 @@ export class DetalleGastronomiaComponent implements OnInit {
   menus: MenuDto[] = [];
   loading = false;
   error: string | null = null;
+  isPublic = false;
   
   // Formulario de reserva
   showReservaForm = false;
@@ -38,6 +39,7 @@ export class DetalleGastronomiaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isPublic = this.router.url.includes('/publica/');
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadEstablecimiento(id);
@@ -73,6 +75,16 @@ export class DetalleGastronomiaComponent implements OnInit {
   }
 
   toggleReservaForm() {
+    if (this.isPublic) {
+      // En vista pública no abrimos formulario
+      if (this.auth.isAuthenticated()) {
+        this.router.navigate(['/cliente/gastronomia', this.establecimiento?.id || '']);
+      } else {
+        this.toast.error('Debes iniciar sesión para hacer una reserva');
+        this.router.navigate(['/login']);
+      }
+      return;
+    }
     if (!this.auth.isAuthenticated()) {
       this.toast.error('Debes iniciar sesión para hacer una reserva');
       this.router.navigate(['/login']);
@@ -82,6 +94,16 @@ export class DetalleGastronomiaComponent implements OnInit {
   }
 
   crearReserva() {
+    if (this.isPublic) {
+      // En pública nunca crear
+      if (this.auth.isAuthenticated()) {
+        this.router.navigate(['/cliente/gastronomia', this.establecimiento?.id || '']);
+      } else {
+        this.toast.error('Debes iniciar sesión para hacer una reserva');
+        this.router.navigate(['/login']);
+      }
+      return;
+    }
     if (!this.auth.isAuthenticated()) {
       this.toast.error('Debes iniciar sesión para hacer una reserva');
       this.router.navigate(['/login']);
