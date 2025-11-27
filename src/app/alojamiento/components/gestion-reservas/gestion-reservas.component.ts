@@ -133,7 +133,7 @@ export class GestionReservasComponent implements OnInit {
       : estadoRaw.includes('confirm') || estadoRaw.includes('acept') ? 'Confirmada'
       : estadoRaw.includes('rechaz') ? 'Rechazada'
       : 'Cancelada';
-    let comprobanteUrl = (r as any).comprobanteUrl || (r as any).ComprobanteUrl || '';
+    let comprobanteUrl = (r as any).comprobanteUrl || (r as any).ComprobanteUrl || (r as any).comprobante || (r as any).Comprobante || (r as any).comprobantePath || (r as any).rutaComprobante || '';
     // Si el backend devuelve una ruta relativa como "/comprobantes/xxx",
     // convertirla a una URL absoluta usando la raíz del API (quitando '/api').
     if (comprobanteUrl && !/^https?:\/\//i.test(comprobanteUrl)) {
@@ -153,6 +153,12 @@ export class GestionReservasComponent implements OnInit {
       alojamientoId: r.alojamientoId,
       comprobanteUrl: comprobanteUrl || undefined
     };
+  }
+
+  comprobanteVerUrl(reserva: ReservaUI): string {
+    if (reserva.comprobanteUrl) return reserva.comprobanteUrl;
+    const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
+    return `${apiRoot}/reservas/${reserva.id}/comprobante`;
   }
 
   get filteredReservas(): ReservaUI[] {

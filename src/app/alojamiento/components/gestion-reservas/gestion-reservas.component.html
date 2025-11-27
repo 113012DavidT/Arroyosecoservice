@@ -84,13 +84,18 @@
         <div><strong>Estado:</strong> {{ r.estado }}</div>
       </div>
 
-      <div class="comprobante" *ngIf="r.comprobanteUrl">
+      <div class="comprobante">
         <strong>Comprobante:</strong>
-        <ng-container *ngIf="r.comprobanteUrl.endsWith('.pdf'); else imgComp">
-          <a [href]="r.comprobanteUrl" target="_blank" rel="noopener">Ver PDF</a>
+        <ng-container *ngIf="r.comprobanteUrl; else linkSolo">
+          <ng-container *ngIf="r.comprobanteUrl.endsWith('.pdf'); else imgComp">
+            <a [href]="r.comprobanteUrl" target="_blank" rel="noopener">Ver PDF</a>
+          </ng-container>
+          <ng-template #imgComp>
+            <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
+          </ng-template>
         </ng-container>
-        <ng-template #imgComp>
-          <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
+        <ng-template #linkSolo>
+          <a [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir comprobante</a>
         </ng-template>
       </div>
     </div>
