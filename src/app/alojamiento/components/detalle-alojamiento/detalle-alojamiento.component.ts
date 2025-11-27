@@ -37,11 +37,11 @@ export class DetalleAlojamientoComponent implements OnInit {
   error: string | null = null;
   // Calendario
   reservedDateSet = new Set<string>();
-  // Filtro de fechas no seleccionables (ocupadas)
-  dateFilter = (d: Date | null) => {
-    if (!d) return false;
-    return !this.reservedDateSet.has(this.key(d));
-  };
+  // (Se eliminó uso directo de dateFilter en template por incompatibilidad del binding en build Vercel)
+  // Mantenemos función utilitaria si necesitamos reutilizar.
+  private isDisponible(d: Date | null): boolean {
+    return !!d && !this.reservedDateSet.has(this.key(d));
+  }
   // Pago por transferencia
   showPagoModal = false;
   comprobanteFile: File | null = null;
@@ -132,6 +132,34 @@ export class DetalleAlojamientoComponent implements OnInit {
       return;
     }
     this.showPagoModal = true;
+  }
+
+  onEntradaChange(ev: any) {
+    const d: Date | null = ev?.value ?? null;
+    if (!this.isDisponible(d)) {
+      this.booking.entrada = null;
+      this.toast.error('Fecha de entrada ocupada');
+    } else {
+      this.booking.entrada = d;
+      // Ajustar salida si quedó antes de entrada
+      if (this.booking.salida && this.booking.salida < this.booking.entrada) {
+        this.booking.salida = null;
+      }
+    }
+  }
+
+  onSalidaChange(ev: any) {
+    const d: Date | null = ev?.value ?? null;
+    if (!this.isDisponible(d)) {
+      this.booking.salida = null;
+      this.toast.error('Fecha de salida ocupada');
+    } else {
+      this.booking.salida = d;
+      if (this.booking.entrada && d && d < this.booking.entrada) {
+        this.toast.error('La salida no puede ser antes de la entrada');
+        this.booking.salida = null;
+      }
+    }
   }
 
   cerrarModalPago() {
