@@ -178,7 +178,17 @@ export class GestionReservasComponent implements OnInit {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       },
-      error: () => this.toastService.error('No se pudo descargar el comprobante')
+      error: (err) => {
+        const status = err?.status;
+        if (status === 404) {
+          this.toastService.info('Esta reserva no tiene comprobante disponible');
+        } else if (status === 401) {
+          this.toastService.error('Tu sesión expiró o no tienes permisos para ver el comprobante');
+        } else {
+          this.toastService.error('No se pudo descargar el comprobante');
+        }
+        console.error('Error al descargar comprobante:', err);
+      }
     });
   }
 

@@ -24,10 +24,12 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       // BUT: No hacer logout en POST de creación de reservas (podría ser error del backend, no de auth)
       if (error.status === 401 && !isAuthEndpoint && token) {
         // Detectar endpoints de reservas (case-insensitive)
-        const isReservationEndpoint = /\/(reservas|reservasGastronomia)/i.test(req.url) && req.method === 'POST';
+        const isReservationCreate = /\/(reservas|reservasGastronomia)/i.test(req.url) && req.method === 'POST';
+        // Excepción adicional: descarga de comprobante (GET) no debe cerrar sesión automáticamente
+        const isComprobanteDownload = /\/(reservas|reservasGastronomia)\/.+\/comprobante$/i.test(req.url);
         
         // Si NO es un endpoint de reserva, hacer logout
-        if (!isReservationEndpoint) {
+        if (!isReservationCreate && !isComprobanteDownload) {
           console.warn('Logout automático por 401 en:', req.url);
           auth.logout();
           const url = req.url.toLowerCase();
@@ -39,7 +41,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/cliente/login');
           }
         } else {
-          console.warn('401 en endpoint de reserva - no hacer logout automático:', req.url);
+          console.warn('401 en endpoint de reserva/comprobante - no hacer logout automático:', req.url);
         }
       }
       return throwError(() => error);
