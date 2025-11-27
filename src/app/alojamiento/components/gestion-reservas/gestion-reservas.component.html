@@ -88,8 +88,6 @@
         <strong>Comprobante:</strong>
         <div class="comp-actions">
           <button type="button" class="btn" (click)="descargarComprobante(r)">Descargar comprobante</button>
-          <a *ngIf="r.comprobanteUrl" class="btn ghost" [href]="r.comprobanteUrl" target="_blank" rel="noopener">Abrir enlace</a>
-          <a *ngIf="!r.comprobanteUrl" class="btn ghost" [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir enlace</a>
         </div>
         <div *ngIf="r.comprobanteUrl && !r.comprobanteUrl.endsWith('.pdf')" class="comp-preview">
           <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />

@@ -20,12 +20,16 @@
         <form #f="ngForm" (ngSubmit)="submit(f)">
           <label>
             Correo Electrónico
-            <input type="email" name="email" [(ngModel)]="model.email" placeholder="Ejemplo: correo@gmail.com" required/>
+            <input type="email" name="email" [(ngModel)]="model.email" placeholder="Ejemplo: correo@gmail.com" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" #email="ngModel"/>
+            <small class="err" *ngIf="email.invalid && (email.dirty || email.touched)">Ingresa un correo válido</small>
           </label>
 
           <label>
             Contraseña
-            <input type="password" name="password" [(ngModel)]="model.password" placeholder="Contraseña" required/>
+            <input type="password" name="password" [(ngModel)]="model.password" placeholder="Contraseña" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$" #pwd="ngModel"/>
+            <small class="err" *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)">
+              Mínimo 8 caracteres, con mayúscula, minúscula y número
+            </small>
           </label>
 
           <button type="submit" [disabled]="f.invalid || loading">

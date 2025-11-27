@@ -21,6 +21,16 @@ export class ClienteRegisterComponent {
 
   submit(form: NgForm) {
     if (form.invalid || this.loading) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!emailRegex.test(this.model.email)) {
+      this.toast.show('Correo inválido', 'error');
+      return;
+    }
+    if (!strongPwd.test(this.model.password)) {
+      this.toast.show('Contraseña insegura: usa 8+ caracteres, mayúscula, minúscula y número', 'error');
+      return;
+    }
     if (this.model.password !== this.model.confirm) {
       this.toast.show('Las contraseñas no coinciden', 'error');
       return;

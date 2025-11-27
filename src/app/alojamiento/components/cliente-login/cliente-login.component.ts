@@ -35,6 +35,16 @@ export class ClienteLoginComponent implements OnInit {
 
   submit(form: NgForm) {
     if (form.invalid || this.loading) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!emailRegex.test(this.model.email)) {
+      this.toast.show('Correo inválido', 'error');
+      return;
+    }
+    if (!strongPwd.test(this.model.password)) {
+      this.toast.show('Contraseña insegura: usa 8+ caracteres, mayúscula, minúscula y número', 'error');
+      return;
+    }
     this.loading = true;
     this.auth.login({ email: this.model.email, password: this.model.password }).pipe(first()).subscribe({
       next: () => {
