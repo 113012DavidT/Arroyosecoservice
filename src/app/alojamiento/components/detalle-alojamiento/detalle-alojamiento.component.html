@@ -33,11 +33,15 @@
 									<input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" required />
 								</mat-date-range-input>
 								<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-								<mat-date-range-picker #picker [dateClass]="dateClass"></mat-date-range-picker>
+								<mat-date-range-picker #picker [dateClass]="dateClass" [dateFilter]="dateFilter"></mat-date-range-picker>
 							</mat-form-field>
 
 							<div class="calendar-legend">
 								<span class="dot"></span> Fechas en rojo: ocupadas (Confirmada)
+							</div>
+
+							<div *ngIf="booking.entrada && booking.salida && !rangoDisponible()" style="color:#b91c1c;font-weight:600">
+								El rango seleccionado incluye fechas ocupadas.
 							</div>
 
 							<label>
@@ -49,7 +53,7 @@
 								Total a pagar: ${{ total.toLocaleString() }} MXN
 							</div>
 
-							<button type="submit" [disabled]="b.invalid || !total">Reservar ahora</button>
+							<button type="submit" [disabled]="b.invalid || !total || !rangoDisponible()">Reservar ahora</button>
 						</form>
 					</div>
 					<ng-template #irCliente>

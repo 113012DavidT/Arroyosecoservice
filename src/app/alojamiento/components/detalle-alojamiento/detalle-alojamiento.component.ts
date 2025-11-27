@@ -37,6 +37,11 @@ export class DetalleAlojamientoComponent implements OnInit {
   error: string | null = null;
   // Calendario
   reservedDateSet = new Set<string>();
+  // Filtro de fechas no seleccionables (ocupadas)
+  dateFilter = (d: Date | null) => {
+    if (!d) return false;
+    return !this.reservedDateSet.has(this.key(d));
+  };
   // Pago por transferencia
   showPagoModal = false;
   comprobanteFile: File | null = null;
@@ -88,6 +93,20 @@ export class DetalleAlojamientoComponent implements OnInit {
 
   dateClass = (d: Date) => this.reservedDateSet.has(this.key(d)) ? 'reserved-date' : '';
 
+  // Verifica que el rango seleccionado no incluya días ocupados
+  rangoDisponible(): boolean {
+    const inicio = this.booking.entrada;
+    const fin = this.booking.salida;
+    if (!inicio || !fin) return false;
+    if (fin < inicio) return false;
+    const d = new Date(inicio);
+    while (d <= fin) {
+      if (this.reservedDateSet.has(this.key(d))) return false;
+      d.setDate(d.getDate() + 1);
+    }
+    return true;
+  }
+
   get total(): number {
     if (!this.booking.entrada || !this.booking.salida || !this.alojamiento) return 0;
     const ms = this.booking.salida.getTime() - this.booking.entrada.getTime();
@@ -108,6 +127,10 @@ export class DetalleAlojamientoComponent implements OnInit {
       return;
     }
     if (form.invalid || !this.total) return;
+    if (!this.rangoDisponible()) {
+      this.toast.error('El rango seleccionado incluye fechas ocupadas');
+      return;
+    }
     this.showPagoModal = true;
   }
 
