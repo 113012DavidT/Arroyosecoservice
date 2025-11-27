@@ -29,11 +29,11 @@
 							<mat-form-field appearance="outline">
 								<mat-label>Rango de fechas</mat-label>
 								<mat-date-range-input [rangePicker]="picker">
-									<input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" required />
-									<input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" required />
+									<input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" [matDatepickerFilter]="dateFilter" required />
+									<input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" [matDatepickerFilter]="dateFilter" required />
 								</mat-date-range-input>
 								<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-								<mat-date-range-picker #picker [dateClass]="dateClass" [dateFilter]="dateFilter"></mat-date-range-picker>
+								<mat-date-range-picker #picker [dateClass]="dateClass"></mat-date-range-picker>
 							</mat-form-field>
 
 							<div class="calendar-legend">

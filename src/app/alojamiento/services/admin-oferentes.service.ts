@@ -57,7 +57,16 @@ export class AdminOferentesService {
   }
 
   crearSolicitud(payload: { nombreSolicitante: string; telefono: string; mensaje: string; tipoSolicitado: number; correo?: string; nombreNegocio?: string }): Observable<any> {
-    return this.api.post('/solicitudesoferente', payload);
+    // En algunos despliegues el backend espera variaciones del campo correo/email.
+    // Mandamos varias claves para maximizar compatibilidad y evitar que se asigne un correo por defecto.
+    const extended: any = {
+      ...payload,
+      email: payload.correo,
+      correoSolicitante: payload.correo,
+      emailSolicitante: payload.correo
+    };
+    // Unificamos endpoint a la versión capitalizada usada en otros servicios.
+    return this.api.post('/SolicitudesOferente', extended);
   }
 
   aprobarSolicitud(id: number, tipoOferente?: number): Observable<any> {
