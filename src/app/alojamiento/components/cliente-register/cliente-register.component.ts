@@ -22,13 +22,12 @@ export class ClienteRegisterComponent {
   submit(form: NgForm) {
     if (form.invalid || this.loading) return;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!emailRegex.test(this.model.email)) {
       this.toast.show('Correo inválido', 'error');
       return;
     }
-    if (!strongPwd.test(this.model.password)) {
-      this.toast.show('Contraseña insegura: usa 8+ caracteres, mayúscula, minúscula y número', 'error');
+    if (this.model.password.length < 6) {
+      this.toast.show('Contraseña demasiado corta (mínimo 6 caracteres)', 'error');
       return;
     }
     if (this.model.password !== this.model.confirm) {

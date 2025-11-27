@@ -9,8 +9,8 @@
       </label>
       <label>
         Contraseña
-        <input type="password" name="password" [(ngModel)]="model.password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$" #pwd="ngModel"/>
-        <small class="err" *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)">8+ caráct., mayúscula, minúscula y número</small>
+        <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" pattern=".{6,}" #pwd="ngModel"/>
+        <small class="err" *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)">Mínimo 6 caracteres</small>
       </label>
       <label>
         Confirmar contraseña
