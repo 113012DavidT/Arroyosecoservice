@@ -95,7 +95,8 @@
           </ng-template>
         </ng-container>
         <ng-template #linkSolo>
-          <a [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir comprobante</a>
+          <button type="button" class="btn" (click)="descargarComprobante(r)">Descargar comprobante</button>
+          <a class="btn ghost" [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir comprobante</a>
         </ng-template>
       </div>
     </div>

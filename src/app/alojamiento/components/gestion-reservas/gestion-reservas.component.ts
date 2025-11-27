@@ -157,8 +157,29 @@ export class GestionReservasComponent implements OnInit {
 
   comprobanteVerUrl(reserva: ReservaUI): string {
     if (reserva.comprobanteUrl) return reserva.comprobanteUrl;
-    const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
-    return `${apiRoot}/reservas/${reserva.id}/comprobante`;
+    // Fallback apunta al endpoint documentado: GET /api/reservas/{id}/comprobante
+    const base = this.api.baseUrl.replace(/\/$/, '');
+    return `${base}/reservas/${reserva.id}/comprobante`;
+  }
+
+  descargarComprobante(reserva: ReservaUI) {
+    this.api.getBlob(`/reservas/${reserva.id}/comprobante`).pipe(first()).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        // Intentar abrir en nueva pestaña; si el navegador bloquea, forzar descarga
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        // Nombre sugerido
+        const nombre = `comprobante-reserva-${reserva.folio || reserva.id}`;
+        a.download = nombre;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.toastService.error('No se pudo descargar el comprobante')
+    });
   }
 
   get filteredReservas(): ReservaUI[] {

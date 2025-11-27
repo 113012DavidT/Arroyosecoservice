@@ -21,6 +21,11 @@ export class ApiService {
     return this.http.get<T>(this.url(path), { params: params as any });
   }
 
+  // Descarga de binarios (e.g., comprobantes)
+  getBlob(path: string): Observable<Blob> {
+    return this.http.get(this.url(path), { responseType: 'blob' as 'json' }) as any;
+  }
+
   post<T>(path: string, body: any, headers?: HttpHeaders): Observable<T> {
     return this.http.post<T>(this.url(path), body, { headers });
   }
