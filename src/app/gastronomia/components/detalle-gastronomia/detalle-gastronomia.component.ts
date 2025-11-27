@@ -128,10 +128,8 @@ export class DetalleGastronomiaComponent implements OnInit {
           this.showReservaForm = false;
           this.resetForm();
           this.submitting = false;
-          // Redirigir a la página de reserva creada
-          if (result?.id) {
-            this.router.navigate(['/cliente/gastronomia/reserva', result.id]);
-          }
+          // Redirigir a listado de reservas de gastronomía (ruta existente)
+          this.router.navigate(['/cliente/gastronomia/reservas']);
         },
         error: (err) => {
           console.error('Error al crear reserva de gastronomía:', err);
