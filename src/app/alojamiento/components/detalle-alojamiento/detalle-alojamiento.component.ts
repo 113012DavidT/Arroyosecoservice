@@ -142,7 +142,7 @@ export class DetalleAlojamientoComponent implements OnInit {
     } else {
       this.booking.entrada = d;
       // Ajustar salida si quedó antes de entrada
-      if (this.booking.salida && this.booking.salida < this.booking.entrada) {
+      if (this.booking.entrada && this.booking.salida && this.booking.salida < this.booking.entrada) {
         this.booking.salida = null;
       }
     }
@@ -155,7 +155,7 @@ export class DetalleAlojamientoComponent implements OnInit {
       this.toast.error('Fecha de salida ocupada');
     } else {
       this.booking.salida = d;
-      if (this.booking.entrada && d && d < this.booking.entrada) {
+      if (this.booking.entrada && this.booking.salida && this.booking.salida < this.booking.entrada) {
         this.toast.error('La salida no puede ser antes de la entrada');
         this.booking.salida = null;
       }
