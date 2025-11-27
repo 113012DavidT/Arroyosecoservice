@@ -253,9 +253,11 @@ export class GestionReservasComponent implements OnInit {
       if (result) {
         this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
           next: () => {
-            this.toastService.info(`Reserva ${reserva.folio || reserva.id} rechazada`);
-            this.modalService.confirm({ title: 'Reserva rechazada', message: `Se rechazó la reserva ${reserva.folio || reserva.id}.`, confirmText: 'Aceptar' });
-            this.actualizarEstadoLocal(reserva.id, 'Rechazada');
+            // Estado local: puede ser Rechazada o Cancelada según fallback
+            const nuevoEstado = this.reservas.find(r => r.id === reserva.id)?.estado === 'Cancelada' ? 'Cancelada' : 'Rechazada';
+            this.toastService.info(`Reserva ${reserva.folio || reserva.id} ${nuevoEstado.toLowerCase()}.`);
+            this.modalService.confirm({ title: `Reserva ${nuevoEstado}`, message: `Se marcó la reserva ${reserva.folio || reserva.id} como ${nuevoEstado}.`, confirmText: 'Aceptar' });
+            this.actualizarEstadoLocal(reserva.id, nuevoEstado as any);
             this.cerrarDetalle();
           },
           error: () => this.toastService.error('No se pudo rechazar la reserva')

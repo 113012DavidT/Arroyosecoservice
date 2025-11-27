@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
 export interface CrearReservaDto {
   alojamientoId: number;
@@ -118,7 +119,17 @@ export class ReservasService {
   }
 
   rechazar(id: number): Observable<any> {
-    // Usa el endpoint genérico de cambio de estado a 'Rechazada'
-    return this.cambiarEstado(id, 'Rechazada');
+    // Intento principal: 'Rechazada'. Si backend falla (500) probar 'Cancelada'.
+    return this.cambiarEstado(id, 'Rechazada').pipe(
+      catchError(err => {
+        if (err?.status === 500) {
+          // Fallback a 'Cancelada' por posible regla de transición en backend
+            return this.cambiarEstado(id, 'Cancelada').pipe(
+              catchError(e2 => throwError(() => e2))
+            );
+        }
+        return throwError(() => err);
+      })
+    );
   }
 }
