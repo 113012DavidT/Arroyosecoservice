@@ -86,18 +86,14 @@
 
       <div class="comprobante">
         <strong>Comprobante:</strong>
-        <ng-container *ngIf="r.comprobanteUrl; else linkSolo">
-          <ng-container *ngIf="r.comprobanteUrl.endsWith('.pdf'); else imgComp">
-            <a [href]="r.comprobanteUrl" target="_blank" rel="noopener">Ver PDF</a>
-          </ng-container>
-          <ng-template #imgComp>
-            <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
-          </ng-template>
-        </ng-container>
-        <ng-template #linkSolo>
+        <div class="comp-actions">
           <button type="button" class="btn" (click)="descargarComprobante(r)">Descargar comprobante</button>
-          <a class="btn ghost" [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir comprobante</a>
-        </ng-template>
+          <a *ngIf="r.comprobanteUrl" class="btn ghost" [href]="r.comprobanteUrl" target="_blank" rel="noopener">Abrir enlace</a>
+          <a *ngIf="!r.comprobanteUrl" class="btn ghost" [href]="comprobanteVerUrl(r)" target="_blank" rel="noopener">Abrir enlace</a>
+        </div>
+        <div *ngIf="r.comprobanteUrl && !r.comprobanteUrl.endsWith('.pdf')" class="comp-preview">
+          <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
+        </div>
       </div>
     </div>
     <div class="modal__footer">

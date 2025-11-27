@@ -224,6 +224,7 @@ export class GestionReservasComponent implements OnInit {
     this.reservasService.aceptar(reserva.id).pipe(first()).subscribe({
       next: () => {
         this.toastService.success(`Reserva ${reserva.folio || reserva.id} confirmada exitosamente`);
+        this.modalService.confirm({ title: 'Reserva confirmada', message: `Se confirmó la reserva ${reserva.folio || reserva.id}.`, confirmText: 'Aceptar' });
         this.actualizarEstadoLocal(reserva.id, 'Confirmada');
         this.cerrarDetalle();
       },
@@ -243,6 +244,7 @@ export class GestionReservasComponent implements OnInit {
         this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
           next: () => {
             this.toastService.info(`Reserva ${reserva.folio || reserva.id} rechazada`);
+            this.modalService.confirm({ title: 'Reserva rechazada', message: `Se rechazó la reserva ${reserva.folio || reserva.id}.`, confirmText: 'Aceptar' });
             this.actualizarEstadoLocal(reserva.id, 'Rechazada');
             this.cerrarDetalle();
           },

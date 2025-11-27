@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReservasGastronomiaService, ReservaGastronomiaDto } from '../../services/reservas-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
 @Component({
   selector: 'app-oferente-reservas-gastronomia',
@@ -16,10 +17,9 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
   loading = false;
   tab: 'pendientes' | 'confirmadas' | 'todas' = 'pendientes';
 
-  constructor(
-    private reservasService: ReservasGastronomiaService,
-    private toast: ToastService
-  ) {}
+  private reservasService = inject(ReservasGastronomiaService);
+  private toast = inject(ToastService);
+  private modal = inject(ConfirmModalService);
 
   ngOnInit(): void {
     this.loadReservas();
@@ -55,20 +55,34 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
     this.reservasService.confirmar(id).pipe(first()).subscribe({
       next: () => {
         this.toast.success('Reserva confirmada');
-        this.loadReservas();
+        this.modal.confirm({ title: 'Reserva confirmada', message: 'La reserva ha sido confirmada.', confirmText: 'Aceptar' });
+        // Actualiza localmente sin recargar todo
+        const idx = this.reservas.findIndex(r => r.id === id);
+        if (idx >= 0) this.reservas[idx] = { ...this.reservas[idx], estado: 'Confirmada' };
       },
       error: () => this.toast.error('Error al confirmar')
     });
   }
 
   cancelar(id?: number) {
-    if (!id || !confirm('¿Cancelar esta reserva?')) return;
-    this.reservasService.cancelar(id).pipe(first()).subscribe({
-      next: () => {
-        this.toast.success('Reserva cancelada');
-        this.loadReservas();
-      },
-      error: () => this.toast.error('Error al cancelar')
+    if (!id) return;
+    this.modal.confirm({
+      title: 'Rechazar reserva',
+      message: '¿Deseas rechazar esta reserva?',
+      confirmText: 'Rechazar',
+      cancelText: 'Cancelar',
+      isDangerous: true
+    }).then(ok => {
+      if (!ok) return;
+      this.reservasService.cancelar(id).pipe(first()).subscribe({
+        next: () => {
+          this.toast.success('Reserva rechazada');
+          this.modal.confirm({ title: 'Reserva rechazada', message: 'La reserva ha sido rechazada.', confirmText: 'Aceptar' });
+          const idx = this.reservas.findIndex(r => r.id === id);
+          if (idx >= 0) this.reservas[idx] = { ...this.reservas[idx], estado: 'Cancelada' };
+        },
+        error: () => this.toast.error('Error al rechazar')
+      });
     });
   }
 
