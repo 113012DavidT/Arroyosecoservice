@@ -35,7 +35,18 @@ export class ReservasService {
   private readonly api = inject(ApiService);
 
   crear(payload: CrearReservaDto): Observable<any> {
-    return this.api.post('/reservas', payload);
+    // Intento 1: endpoint/lowercase con camelCase
+    return this.api.post('/reservas', payload).pipe(
+      catchError(err => {
+        // Intento 2: endpoint PascalCase
+        const pascal = {
+          AlojamientoId: payload.alojamientoId,
+          FechaEntrada: payload.fechaEntrada,
+          FechaSalida: payload.fechaSalida
+        };
+        return this.api.post('/Reservas', pascal);
+      })
+    );
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
@@ -102,15 +113,35 @@ export class ReservasService {
 
   crearConComprobante(payload: CrearReservaDto, archivo: File): Observable<any> {
     const form = new FormData();
-
-    // Enviar cada campo por separado (más compatible con ASP.NET)
+    // Duplicar nombres de campos en camelCase y PascalCase para compatibilidad
+    form.append('alojamientoId', payload.alojamientoId.toString());
     form.append('AlojamientoId', payload.alojamientoId.toString());
+    form.append('fechaEntrada', payload.fechaEntrada);
     form.append('FechaEntrada', payload.fechaEntrada);
+    form.append('fechaSalida', payload.fechaSalida);
     form.append('FechaSalida', payload.fechaSalida);
+    form.append('comprobante', archivo, archivo.name);
     form.append('Comprobante', archivo, archivo.name);
 
-    // Importante: NO agregues headers manualmente → deja que el navegador genere el boundary
-    return this.api.post('/reservas/crear-con-comprobante', form);
+    const tryEndpoints = [
+      '/reservas/crear-con-comprobante',
+      '/Reservas/crear-con-comprobante',
+      '/Reservas/CrearConComprobante',
+      '/reservas/crearConComprobante'
+    ];
+
+    // Intentar secuencialmente distintos endpoints hasta que alguno funcione
+    const attempt = (idx: number): Observable<any> => {
+      if (idx >= tryEndpoints.length) {
+        // Si ninguno funciona, propagar el error original
+        return throwError(() => new Error('No se pudo crear la reserva con comprobante'));
+      }
+      return this.api.post(tryEndpoints[idx], form).pipe(
+        catchError(() => attempt(idx + 1))
+      );
+    };
+
+    return attempt(0);
   }
 
   aceptar(id: number): Observable<any> {
