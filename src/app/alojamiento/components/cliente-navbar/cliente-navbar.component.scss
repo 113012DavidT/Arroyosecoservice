@@ -5,7 +5,17 @@
   position: sticky;
   top: 0;
   z-index: 100;
-/* Side drawer look (previous style) */
+}
+
+.navbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Side drawer (mobile) */
 .nav-drawer {
   position: fixed;
   top: 0;
@@ -30,6 +40,12 @@
 }
 .nav-drawer .drawer-actions {
   margin-top: 1rem; display: flex; flex-direction: column; gap: .75rem; border-top: 1px solid #e5e7eb; padding-top: 1rem;
+}
+
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .nav-link:hover { color: #1f2937; border-bottom-color: #d1d5db; }
@@ -59,12 +75,41 @@
   .ir-restaurantes { font-size: 0.85rem; padding: 0.4rem 0.75rem; }
 }
 
-  .desktop-link { display: none; }
-  @media (min-width: 768px) { .desktop-link { display: flex; } }
+.desktop-link { display: none; }
+@media (min-width: 768px) { .desktop-link { display: flex; } }
 
-  .logout { text-decoration: none; color: #dc2626; font-weight: 600; font-size: 0.95rem; padding: 0.5rem 1.25rem; border-radius: 8px; transition: all 0.2s; flex-shrink: 0; }
-  .logout:hover { background: #fee2e2; }
-  .logout-mobile { display: block; margin-top: 1rem; text-align: center; background: #fee2e2; }
-  @media (min-width: 768px) { .logout-mobile { display: none; } }
-  .logout-desktop { display: none; }
-  @media (min-width: 768px) { .logout-desktop { display: block; } }
+.logout { text-decoration: none; color: #dc2626; font-weight: 600; font-size: 0.95rem; padding: 0.5rem 1.25rem; border-radius: 8px; transition: all 0.2s; flex-shrink: 0; }
+.logout:hover { background: #fee2e2; }
+.logout-mobile { display: block; margin-top: 1rem; text-align: center; background: #fee2e2; }
+@media (min-width: 768px) { .logout-mobile { display: none; } }
+.logout-desktop { display: none; }
+@media (min-width: 768px) { .logout-desktop { display: block; } }
+
+/* Desktop layout: render drawer content inline */
+@media (min-width: 768px) {
+  .nav-drawer {
+    position: static;
+    transform: none !important;
+    width: auto;
+    max-width: none;
+    flex-direction: row;
+    padding: 0;
+    box-shadow: none;
+    overflow: visible;
+    gap: 1.5rem;
+  }
+  .nav-drawer .close-btn { display: none; }
+  .nav-drawer .drawer-actions {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  .drawer-links {
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
+  }
+}
