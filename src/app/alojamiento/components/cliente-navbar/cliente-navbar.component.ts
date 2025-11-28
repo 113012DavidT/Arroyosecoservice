@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FavoritesService } from '../../../shared/services/favorites.service';
 import { BehaviorSubject } from 'rxjs';
@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-cliente-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './cliente-navbar.component.html',
   styleUrls: ['./cliente-navbar.component.scss']
 })
@@ -27,4 +27,5 @@ export class ClienteNavbarComponent {
 
   menuOpen = false;
   toggleMenu() { this.menuOpen = !this.menuOpen; }
+  closeMenu() { this.menuOpen = false; }
 }
