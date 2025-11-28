@@ -64,19 +64,19 @@ export class OferenteDashboardComponent implements OnInit {
       next: (list) => this.alojamientosActivos = list?.length ?? 0,
       error: () => this.alojamientosActivos = 0
     });
-    // Reservas pendientes: agregamos por alojamiento del oferente para evitar 404 en /oferente/reservas
+    // Reservas pendientes: contar "Pendiente" y "PagoEnRevision" por cada alojamiento del oferente
     this.alojamientosService.listMine().pipe(
       switchMap(list => {
         const ids = (list || []).map(a => a.id).filter(Boolean) as number[];
-        if (!ids.length) return of([]);
-        return forkJoin(ids.map(id => this.reservasService.listByAlojamiento(id, 'Pendiente'))).pipe(
-          map(arrays => arrays.flat())
-        );
+        if (!ids.length) return of([] as any[]);
+        const pendientes$ = forkJoin(ids.map(id => this.reservasService.listByAlojamiento(id, 'Pendiente'))).pipe(map(arr => arr.flat()));
+        const pagoRev$ = forkJoin(ids.map(id => this.reservasService.listByAlojamiento(id, 'PagoEnRevision'))).pipe(map(arr => arr.flat()));
+        return forkJoin([pendientes$, pagoRev$]).pipe(map(([p, r]) => [...p, ...r]));
       }),
       first(),
       catchError(() => {
         this.reservasPendientes = 0;
-        return of([]);
+        return of([] as any[]);
       })
     ).subscribe(all => {
       this.reservasPendientes = (all || []).length;
