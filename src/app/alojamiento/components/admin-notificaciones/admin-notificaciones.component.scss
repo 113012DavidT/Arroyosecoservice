@@ -88,6 +88,29 @@ tbody tr:hover {
   background: #1586c5;
 }
 
+/* Botón "Marcar como leída" con look de oferente */
+.actions .btn { margin-left: 0.5rem; }
+.btn.mark {
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #4b5563;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn.mark:hover {
+  background: #f9fafb;
+  color: #1f2937;
+  border-color: #9ca3af;
+}
+.btn.mark:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  background: #f3f4f6;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
