@@ -1,6 +1,7 @@
 .oferente-navbar {
   background: #fff;
-  border-bottom: 2px solid #e5e7eb;
+  /* Match Gastronomía navbar underline */
+  border-bottom: 2px solid #fbbf24;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
@@ -10,9 +11,21 @@
 .navbar-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  /* Match Gastronomía spacing and height */
+  padding: 0 1rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+}
+
+/* Brand sizing equal to Gastronomía */
+.brand { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+.brand__logo { height: 40px; width: auto; }
+
+@media (min-width: 768px) {
+  .navbar-inner { padding: 0 1.5rem; min-height: 72px; }
+  .brand__logo { height: 52px; }
 }
 
 // Drawer
