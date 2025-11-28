@@ -1,0 +1,14 @@
+<nav class="mobile-bottom-nav" *ngIf="isLoggedIn()">
+  <a routerLink="/cliente/alojamientos" routerLinkActive="active" class="nav-item" aria-label="Inicio">
+    <span class="material-icons">home</span>
+    <span class="label">Inicio</span>
+  </a>
+  <a routerLink="/cliente/reservas" routerLinkActive="active" class="nav-item" aria-label="Reservas">
+    <span class="material-icons">event</span>
+    <span class="label">Reservas</span>
+  </a>
+  <a routerLink="/cliente/perfil" routerLinkActive="active" class="nav-item" aria-label="Perfil">
+    <span class="material-icons">person</span>
+    <span class="label">Perfil</span>
+  </a>
+</nav>

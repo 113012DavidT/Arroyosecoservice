@@ -4,11 +4,11 @@
       <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="brand__logo" />
     </a>
 
-    <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">
-      ☰
-    </button>
+    <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">☰</button>
 
-    <nav class="nav-links" [class.open]="menuOpen">
+    <div class="nav-drawer" [class.open]="menuOpen">
+      <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">×</button>
+      <nav class="drawer-links">
       <a
         *ngFor="let link of links"
         [routerLink]="link.route"
@@ -18,13 +18,12 @@
       >
         {{ link.label }}
       </a>
-    </nav>
-
-    <div class="navbar-actions" [class.open]="menuOpen">
-      <a class="cambiar-experiencia" routerLink="/oferente/home" title="Cambiar de módulo">
-        🔄 Cambiar Experiencia
-      </a>
-      <a class="logout" (click)="logout()">Cerrar Sesión</a>
+      <div class="drawer-actions">
+        <a class="cambiar-experiencia" routerLink="/oferente/home" title="Cambiar de módulo">
+          🔄 Cambiar Experiencia
+        </a>
+        <a class="logout" (click)="logout()">Cerrar Sesión</a>
+      </div>
     </div>
   </div>
 </header>
