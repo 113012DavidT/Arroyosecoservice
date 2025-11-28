@@ -1,3 +1,20 @@
+/* Top bar wrapper to match oferente style */
+.admin-navbar {
+  background: #fff;
+  border-bottom: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+}
 // Drawer (mobile)
 .nav-drawer {
   position: fixed;
