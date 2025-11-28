@@ -199,14 +199,9 @@ export class DetalleAlojamientoComponent implements OnInit {
       fechaEntrada: this.formatDateLocal(this.booking.entrada),
       fechaSalida: this.formatDateLocal(this.booking.salida)
     };
-    this.reservasService.crearConComprobante(payload, this.comprobanteFile!).pipe(
-      catchError(err => {
-        // Fallback: crear primero y luego subir comprobante
-        console.error('crear-con-comprobante falló, aplicando fallback:', err);
-        return this.reservasService.crear(payload).pipe(
-          switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!))
-        );
-      }),
+    // Simplificar: crear primero y luego subir comprobante siempre (evita 400 por ruta no soportada)
+    this.reservasService.crear(payload).pipe(
+      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!)),
       first()
     ).subscribe({
       next: () => {
@@ -219,6 +214,8 @@ export class DetalleAlojamientoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al crear reserva:', err);
+        const msg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Error desconocido');
+        this.toast.error(`No se pudo procesar la reserva: ${msg}`);
         this.toast.error('No se pudo procesar la reserva');
         this.creando = false;
       }
