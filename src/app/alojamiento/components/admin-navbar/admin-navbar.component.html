@@ -10,14 +10,15 @@
     <div class="nav-drawer" [class.open]="menuOpen">
       <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">×</button>
       <nav class="drawer-links">
-      <a
-        *ngFor="let link of links"
-        [routerLink]="link.route"
-        routerLinkActive="active"
-        class="nav-link"
-      >
-        {{ link.label }}
-      </a>
+        <a
+          *ngFor="let link of links"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          {{ link.label }}
+        </a>
+      </nav>
       <div class="drawer-actions">
         <a class="btn-module" routerLink="/admin/home" title="Cambiar módulo">
           <svg viewBox="0 0 24 24" width="20" height="20">

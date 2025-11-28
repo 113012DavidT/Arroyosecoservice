@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
+interface BottomItem { path: string; label: string; icon: string; }
+
 @Component({
   selector: 'app-mobile-bottom-nav',
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './mobile-bottom-nav.component.html',
-  styleUrl: './mobile-bottom-nav.component.scss'
+  styleUrls: ['./mobile-bottom-nav.component.scss']
 })
-interface BottomItem { path: string; label: string; icon: string; }
-
 export class MobileBottomNavComponent {
   constructor(private router: Router, private auth: AuthService) {}
 

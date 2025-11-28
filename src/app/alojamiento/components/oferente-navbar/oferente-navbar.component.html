@@ -9,15 +9,16 @@
     <div class="nav-drawer" [class.open]="menuOpen">
       <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">×</button>
       <nav class="drawer-links">
-      <a
-        *ngFor="let link of links"
-        [routerLink]="link.route"
-        routerLinkActive="active"
-        class="nav-link"
-        [routerLinkActiveOptions]="{ exact: false }"
-      >
-        {{ link.label }}
-      </a>
+        <a
+          *ngFor="let link of links"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          {{ link.label }}
+        </a>
+      </nav>
       <div class="drawer-actions">
         <a class="cambiar-experiencia" routerLink="/oferente/home" title="Cambiar de módulo">
           🔄 Cambiar Experiencia

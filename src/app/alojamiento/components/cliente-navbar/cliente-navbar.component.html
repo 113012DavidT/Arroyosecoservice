@@ -9,11 +9,13 @@
     <!-- Side Drawer -->
     <div class="nav-drawer" [class.open]="menuOpen">
       <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">×</button>
-      <a routerLink="/cliente/alojamientos" routerLinkActive="active" class="nav-link">Alojamientos</a>
-      <a routerLink="/cliente/reservas" routerLinkActive="active" class="nav-link">Mis Reservas</a>
-      <a routerLink="/cliente/favoritos" routerLinkActive="active" class="nav-link">Favoritos <span class="badge" *ngIf="count > 0">{{ count }}</span></a>
-      <a routerLink="/cliente/notificaciones" routerLinkActive="active" class="nav-link">Notificaciones</a>
-      <a routerLink="/cliente/perfil" routerLinkActive="active" class="nav-link">Mi Perfil</a>
+      <nav class="drawer-links">
+        <a routerLink="/cliente/alojamientos" routerLinkActive="active" class="nav-link">Alojamientos</a>
+        <a routerLink="/cliente/reservas" routerLinkActive="active" class="nav-link">Mis Reservas</a>
+        <a routerLink="/cliente/favoritos" routerLinkActive="active" class="nav-link">Favoritos <span class="badge" *ngIf="count > 0">{{ count }}</span></a>
+        <a routerLink="/cliente/notificaciones" routerLinkActive="active" class="nav-link">Notificaciones</a>
+        <a routerLink="/cliente/perfil" routerLinkActive="active" class="nav-link">Mi Perfil</a>
+      </nav>
       <div class="drawer-actions">
         <a routerLink="/cliente/gastronomia" class="ir-restaurantes" title="Ver restaurantes">
           🍽️ Ir a Restaurantes
