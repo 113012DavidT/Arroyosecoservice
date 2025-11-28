@@ -26,6 +26,12 @@ export class OferenteNavbarComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  menuOpen = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
