@@ -86,13 +86,18 @@
 
       <div class="comprobante">
         <strong>Comprobante:</strong>
-        <!-- Vista previa primero (imagen o PDF) -->
-        <div class="comp-preview" *ngIf="comprobanteVerUrl(r) as verUrl">
-          <ng-container *ngIf="!isPdfUrl(r); else pdfPreview">
-            <img [src]="verUrl" alt="Comprobante" class="comprobante-img" />
+        <!-- Vista previa segura vía blob (pdf o imagen) -->
+        <div class="comp-preview">
+          <ng-container *ngIf="!previewError; else compError">
+            <ng-container *ngIf="previewType === 'image' && previewUrl">
+              <img [src]="previewUrl" alt="Comprobante" class="comprobante-img" />
+            </ng-container>
+            <ng-container *ngIf="previewType === 'pdf' && previewUrl">
+              <iframe class="comprobante-pdf" title="Comprobante PDF" [src]="previewUrl"></iframe>
+            </ng-container>
           </ng-container>
-          <ng-template #pdfPreview>
-            <iframe class="comprobante-pdf" title="Comprobante PDF" [src]="pdfSafeUrl(r)"></iframe>
+          <ng-template #compError>
+            <div class="text-muted">{{ previewError }}</div>
           </ng-template>
         </div>
 

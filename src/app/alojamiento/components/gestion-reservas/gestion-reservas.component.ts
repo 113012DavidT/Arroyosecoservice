@@ -49,6 +49,11 @@ export class GestionReservasComponent implements OnInit {
   readonly estadosPosibles: string[] = ['Pendiente','PagoEnRevision','Confirmada','Rechazada','Cancelada'];
   detalleAbierto = false;
   reservaSeleccionada: ReservaUI | null = null;
+  // Preview del comprobante
+  previewUrl: SafeResourceUrl | null = null;
+  previewType: 'pdf' | 'image' | null = null;
+  private previewObjectUrl: string | null = null;
+  previewError: string | null = null;
 
   reservas: ReservaUI[] = [];
   loading = false;
@@ -176,6 +181,31 @@ export class GestionReservasComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(withParams);
   }
 
+  private cargarComprobantePreview(reserva: ReservaUI) {
+    this.previewUrl = null;
+    this.previewType = null;
+    this.previewError = null;
+    if (this.previewObjectUrl) {
+      URL.revokeObjectURL(this.previewObjectUrl);
+      this.previewObjectUrl = null;
+    }
+
+    this.api.getBlob(`/reservas/${reserva.id}/comprobante`).pipe(first()).subscribe({
+      next: (blob: Blob) => {
+        if (!blob || blob.size === 0) { this.previewError = 'Sin comprobante'; return; }
+        const obj = URL.createObjectURL(blob);
+        this.previewObjectUrl = obj;
+        this.previewType = (blob.type || '').toLowerCase().includes('pdf') ? 'pdf' : 'image';
+        this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(obj);
+      },
+      error: (err) => {
+        if (err?.status === 404) this.previewError = 'Sin comprobante disponible';
+        else if (err?.status === 401) this.previewError = 'Sin permisos para ver el comprobante';
+        else this.previewError = 'No se pudo cargar el comprobante';
+      }
+    });
+  }
+
   descargarComprobante(reserva: ReservaUI) {
     this.api.getBlob(`/reservas/${reserva.id}/comprobante`).pipe(first()).subscribe({
       next: (blob) => {
@@ -237,11 +267,19 @@ export class GestionReservasComponent implements OnInit {
   abrirDetalle(reserva: ReservaUI) {
     this.reservaSeleccionada = { ...reserva };
     this.detalleAbierto = true;
+    this.cargarComprobantePreview(reserva);
   }
 
   cerrarDetalle() {
     this.detalleAbierto = false;
     this.reservaSeleccionada = null;
+    this.previewUrl = null;
+    this.previewType = null;
+    this.previewError = null;
+    if (this.previewObjectUrl) {
+      URL.revokeObjectURL(this.previewObjectUrl);
+      this.previewObjectUrl = null;
+    }
   }
 
   confirmar(reserva: ReservaUI) {
