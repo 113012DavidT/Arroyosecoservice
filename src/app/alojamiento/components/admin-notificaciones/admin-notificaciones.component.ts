@@ -36,14 +36,21 @@ export class AdminNotificacionesComponent implements OnInit {
     this.loading = true;
     this.notiService.list(false).pipe(first()).subscribe({
       next: (data: NotificacionDto[]) => {
-        this.notificaciones = (data || []).map(d => ({
-          id: String((d as any)?.id ?? (d as any)?.ID ?? (d as any)?.notificacionId ?? ''),
-          nombre: d.titulo || 'Solicitud',
-          telefono: '',
-          negocio: '',
-          estatus: d.leida ? 'Atendida' : 'Abierta',
-          leida: !!d.leida
-        })).filter(n => !!n.id);
+        const mapped: Notificacion[] = (data || [])
+          .map(d => {
+            const rawId = (d as any)?.id ?? (d as any)?.ID ?? (d as any)?.notificacionId ?? '';
+            if (!rawId) return null;
+            return {
+              id: String(rawId),
+              nombre: d.titulo || 'Solicitud',
+              telefono: '',
+              negocio: '',
+              estatus: (d.leida ? 'Atendida' : 'Abierta') as 'Atendida' | 'Abierta',
+              leida: !!d.leida
+            } satisfies Notificacion;
+          })
+          .filter((n): n is Notificacion => !!n);
+        this.notificaciones = mapped;
         this.loading = false;
       },
       error: () => {
