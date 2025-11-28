@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
@@ -34,14 +35,18 @@ export interface ReservaRangoDto {
 @Injectable({ providedIn: 'root' })
 export class ReservasService {
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
 
   crear(payload: CrearReservaDto): Observable<any> {
     // Intento 1: endpoint/lowercase con camelCase
+    const token = this.auth.getToken();
+    const clienteId = token ? this.extractUserId(token) : undefined;
     const bodyCamel: any = {
       alojamientoId: payload.alojamientoId,
       fechaEntrada: payload.fechaEntrada,
       fechaSalida: payload.fechaSalida,
-      huespedes: payload.huespedes
+      huespedes: payload.huespedes,
+      clienteId
     };
     return this.api.post('/reservas', bodyCamel).pipe(
       catchError(err => {
@@ -50,11 +55,30 @@ export class ReservasService {
           AlojamientoId: payload.alojamientoId,
           FechaEntrada: payload.fechaEntrada,
           FechaSalida: payload.fechaSalida,
-          Huespedes: payload.huespedes
+          Huespedes: payload.huespedes,
+          ClienteId: clienteId
         };
         return this.api.post('/Reservas', pascal);
       })
     );
+  }
+
+  private extractUserId(token: string): string | undefined {
+    try {
+      const payloadJson = atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'));
+      const payload = JSON.parse(payloadJson);
+      const keys = [
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier',
+        'nameidentifier',
+        'sub',
+        'userId',
+        'UsuarioId'
+      ];
+      for (const k of keys) {
+        if (payload[k]) return String(payload[k]);
+      }
+    } catch {}
+    return undefined;
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
