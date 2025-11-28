@@ -5,11 +5,12 @@ import { filter, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminNavbarComponent } from '../admin-navbar/admin-navbar.component';
 import { AdminFooterComponent } from '../admin-footer/admin-footer.component';
+import { MobileBottomNavComponent } from '../../../shared/components/mobile-bottom-nav/mobile-bottom-nav.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AdminNavbarComponent, AdminFooterComponent],
+  imports: [CommonModule, RouterOutlet, AdminNavbarComponent, AdminFooterComponent, MobileBottomNavComponent],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss'
 })

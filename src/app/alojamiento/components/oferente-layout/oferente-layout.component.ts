@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { filter, map } from 'rxjs/operators';
 import { OferenteNavbarComponent } from '../oferente-navbar/oferente-navbar.component';
 import { OferenteFooterComponent } from '../oferente-footer/oferente-footer.component';
+import { MobileBottomNavComponent } from '../../../shared/components/mobile-bottom-nav/mobile-bottom-nav.component';
 
 interface HeroData {
   heroTitle?: string;
@@ -14,7 +15,7 @@ interface HeroData {
 @Component({
   selector: 'app-oferente-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, OferenteNavbarComponent, OferenteFooterComponent],
+  imports: [CommonModule, RouterOutlet, OferenteNavbarComponent, OferenteFooterComponent, MobileBottomNavComponent],
   templateUrl: './oferente-layout.component.html',
   styleUrl: './oferente-layout.component.scss'
 })

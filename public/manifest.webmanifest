@@ -1,9 +1,13 @@
 {
-  "name": "arroyo-seco",
-  "short_name": "arroyo-seco",
+  "name": "Arroyo Seco",
+  "short_name": "ArroyoSeco",
+  "description": "Turismo y gastronomía en Arroyo Seco: reservas, hospedajes y restaurantes.",
   "display": "standalone",
-  "scope": "./",
-  "start_url": "./",
+  "scope": "/",
+  "start_url": "/",
+  "theme_color": "#1c66d6",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icons/icon-72x72.png",

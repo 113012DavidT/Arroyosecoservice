@@ -13,38 +13,38 @@
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  // Drawer
+}
+
+// Drawer
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 74%;
+  max-width: 320px;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  padding: 1rem 1.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  transform: translateX(-100%);
+  transition: transform .3s ease;
+  z-index: 300;
+  overflow-y: auto;
+}
+.nav-drawer.open { transform: translateX(0); }
+.nav-drawer .close-btn { align-self: flex-end; background:none; border:none; font-size:2rem; cursor:pointer; margin-bottom:.5rem; }
+.nav-drawer .drawer-actions { margin-top:1rem; display:flex; flex-direction:column; gap:.75rem; border-top:1px solid #e5e7eb; padding-top:1rem; }
+
+@media (min-width: 768px) {
   .nav-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 74%;
-    max-width: 320px;
-    background: #fff;
-    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
-    padding: 1rem 1.25rem 2.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    transform: translateX(-100%);
-    transition: transform .3s ease;
-    z-index: 300;
-    overflow-y: auto;
-    &.open { transform: translateX(0); }
-
-    .close-btn { align-self: flex-end; background:none; border:none; font-size:2rem; cursor:pointer; margin-bottom:.5rem; }
-
-    .drawer-actions { margin-top:1rem; display:flex; flex-direction:column; gap:.75rem; border-top:1px solid #e5e7eb; padding-top:1rem; }
+    position: static; transform:none !important; width:auto; max-width:none; flex-direction:row; padding:0; box-shadow:none; overflow:visible;
   }
-
-  @media (min-width: 768px) {
-    .nav-drawer {
-      position: static; transform:none !important; width:auto; max-width:none; flex-direction:row; padding:0; box-shadow:none; overflow:visible;
-      .close-btn { display:none; }
-      .drawer-actions { margin-top:0; border-top:none; padding-top:0; flex-direction:row; align-items:center; gap:1rem; }
-    }
-  }
+  .nav-drawer .close-btn { display:none; }
+  .nav-drawer .drawer-actions { margin-top:0; border-top:none; padding-top:0; flex-direction:row; align-items:center; gap:1rem; }
+}
 .nav-link:hover {
   color: #1f2937;
   border-bottom-color: #d1d5db;
