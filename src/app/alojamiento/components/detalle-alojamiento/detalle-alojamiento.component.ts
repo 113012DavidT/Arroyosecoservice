@@ -197,7 +197,8 @@ export class DetalleAlojamientoComponent implements OnInit {
     const payload = {
       alojamientoId: this.alojamientoId,
       fechaEntrada: this.formatDateLocal(this.booking.entrada),
-      fechaSalida: this.formatDateLocal(this.booking.salida)
+      fechaSalida: this.formatDateLocal(this.booking.salida),
+      huespedes: this.booking.huespedes
     };
     // Simplificar: crear primero y luego subir comprobante siempre (evita 400 por ruta no soportada)
     this.reservasService.crear(payload).pipe(

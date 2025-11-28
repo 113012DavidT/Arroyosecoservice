@@ -7,6 +7,7 @@ export interface CrearReservaDto {
   alojamientoId: number;
   fechaEntrada: string; // ISO string
   fechaSalida: string;  // ISO string
+  huespedes?: number;
 }
 
 export interface ReservaDto {
@@ -36,13 +37,20 @@ export class ReservasService {
 
   crear(payload: CrearReservaDto): Observable<any> {
     // Intento 1: endpoint/lowercase con camelCase
-    return this.api.post('/reservas', payload).pipe(
+    const bodyCamel: any = {
+      alojamientoId: payload.alojamientoId,
+      fechaEntrada: payload.fechaEntrada,
+      fechaSalida: payload.fechaSalida,
+      huespedes: payload.huespedes
+    };
+    return this.api.post('/reservas', bodyCamel).pipe(
       catchError(err => {
         // Intento 2: endpoint PascalCase
         const pascal = {
           AlojamientoId: payload.alojamientoId,
           FechaEntrada: payload.fechaEntrada,
-          FechaSalida: payload.fechaSalida
+          FechaSalida: payload.fechaSalida,
+          Huespedes: payload.huespedes
         };
         return this.api.post('/Reservas', pascal);
       })
