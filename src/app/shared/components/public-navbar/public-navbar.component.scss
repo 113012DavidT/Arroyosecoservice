@@ -15,6 +15,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
+    gap: 1rem;
   }
 
   .navbar-brand {
@@ -39,6 +40,7 @@
   .experience-switcher {
     display: flex;
     gap: 1rem;
+    &.open { display: flex; }
 
     .exp-btn {
       padding: 0.7rem 1.5rem;
@@ -64,6 +66,7 @@
   }
 
   .navbar-actions {
+    &.open { display: flex; }
     .btn-login {
       padding: 0.7rem 2rem;
       background: #667eea;
@@ -92,6 +95,17 @@
     .navbar-container {
       padding: 0 1rem;
       gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hamburger {
+      display: inline-block;
+      margin-left: auto;
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      font-size: 1.2rem;
     }
 
     .navbar-brand {
@@ -106,6 +120,9 @@
 
     .experience-switcher {
       gap: 0.5rem;
+      width: 100%;
+      display: none;
+      flex-direction: column;
 
       .exp-btn {
         padding: 0.5rem 1rem;
@@ -114,10 +131,15 @@
     }
 
     .navbar-actions {
+      width: 100%;
+      display: none;
+      justify-content: flex-start;
       .btn-login {
         padding: 0.5rem 1rem;
         font-size: 0.85rem;
       }
     }
+    .experience-switcher.open,
+    .navbar-actions.open { display: flex; }
   }
 }

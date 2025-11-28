@@ -36,4 +36,8 @@ export class PublicNavbarComponent implements OnInit {
   goToLogin() {
     this.router.navigate(['/login']);
   }
+
+  // Mobile hamburger
+  menuOpen = false;
+  toggleMenu() { this.menuOpen = !this.menuOpen; }
 }
