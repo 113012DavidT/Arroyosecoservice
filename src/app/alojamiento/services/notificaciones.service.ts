@@ -40,4 +40,24 @@ export class NotificacionesService {
   eliminar(id: number | string): Observable<any> {
     return this.api.delete(`/notificaciones/${id}`);
   }
+
+  crear(payload: { titulo?: string; mensaje: string; destinoRol?: 'oferente' | 'admin'; modulo?: 'alojamiento' | 'gastronomia'; referenciaId?: number | string }): Observable<any> {
+    const body = {
+      titulo: payload.titulo || 'Nueva reserva',
+      mensaje: payload.mensaje,
+      destinoRol: payload.destinoRol || 'oferente',
+      modulo: payload.modulo || 'alojamiento',
+      referenciaId: payload.referenciaId
+    };
+    // Intento minúsculas y luego variante PascalCase
+    return this.api.post('/notificaciones', body).pipe(
+      catchError(() => this.api.post('/Notificaciones', {
+        Titulo: body.titulo,
+        Mensaje: body.mensaje,
+        DestinoRol: body.destinoRol,
+        Modulo: body.modulo,
+        ReferenciaId: body.referenciaId
+      }))
+    );
+  }
 }

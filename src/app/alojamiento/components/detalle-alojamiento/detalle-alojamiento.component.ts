@@ -5,6 +5,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { ReservasService } from '../../services/reservas.service';
+import { NotificacionesService } from '../../services/notificaciones.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -27,6 +28,7 @@ export class DetalleAlojamientoComponent implements OnInit {
   private auth = inject(AuthService);
   private alojamientosService = inject(AlojamientoService);
   private reservasService = inject(ReservasService);
+  private notiService = inject(NotificacionesService);
 
   alojamientoId!: number;
   alojamiento?: AlojamientoDto;
@@ -202,7 +204,16 @@ export class DetalleAlojamientoComponent implements OnInit {
     };
     // Simplificar: crear primero y luego subir comprobante siempre (evita 400 por ruta no soportada)
     this.reservasService.crear(payload).pipe(
-      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!)),
+      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!).pipe(
+        // Tras subir comprobante, crear notificación para oferente (Alojamiento)
+        switchMap(() => this.notiService.crear({
+          titulo: 'Reserva enviada',
+          mensaje: `Nueva reserva en alojamiento #${this.alojamientoId}. Pago en revisión.`,
+          destinoRol: 'oferente',
+          modulo: 'alojamiento',
+          referenciaId: Number(r.id || r.Id)
+        }))
+      )),
       first()
     ).subscribe({
       next: () => {
