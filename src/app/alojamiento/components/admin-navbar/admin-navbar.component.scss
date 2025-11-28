@@ -21,6 +21,12 @@
 .nav-drawer .close-btn { align-self:flex-end; background:none; border:none; font-size:2rem; cursor:pointer; margin-bottom:.5rem; }
 .nav-drawer .drawer-actions { margin-top:1rem; display:flex; flex-direction:column; gap:.75rem; border-top:1px solid #e5e7eb; padding-top:1rem; }
 
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 @media (min-width: 768px) {
   .nav-drawer {
     position: static;
@@ -34,14 +40,10 @@
   }
   .nav-drawer .close-btn { display: none; }
   .nav-drawer .drawer-actions { margin-top:0; border-top:none; padding-top:0; flex-direction:row; align-items:center; gap:1rem; }
+  .drawer-links { flex: 1; flex-direction: row; gap: 1.5rem; align-items: center; }
 }
 
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  flex: 1;
-  flex-wrap: wrap;
-}
+/* .nav-links kept unused (HTML uses .drawer-links); replaced by .drawer-links above */
 
 .nav-link {
   text-decoration: none;
