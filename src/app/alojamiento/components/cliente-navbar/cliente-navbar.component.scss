@@ -75,6 +75,17 @@
   flex-shrink: 0;
 }
 
+.hamburger {
+  display: none;
+  margin-left: auto;
+  background: #fff;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
 .ir-restaurantes {
   text-decoration: none;
   color: #059669;
@@ -113,16 +124,24 @@
     gap: 1rem;
   }
 
+  .hamburger { display: inline-block; }
+
   .nav-links {
     order: 3;
     width: 100%;
     gap: 1rem;
+    display: none;
   }
+  .nav-links.open { display: flex; flex-direction: column; }
 
   .navbar-actions {
     flex-wrap: wrap;
     gap: 0.5rem;
+    order: 4;
+    width: 100%;
+    display: none;
   }
+  .navbar-actions.open { display: flex; flex-direction: column; align-items: stretch; }
 
   .ir-restaurantes {
     font-size: 0.85rem;

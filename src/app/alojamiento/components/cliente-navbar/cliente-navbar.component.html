@@ -4,7 +4,9 @@
       <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="brand__logo" />
     </a>
 
-    <div class="nav-links">
+    <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">☰</button>
+
+    <div class="nav-links" [class.open]="menuOpen">
       <a routerLink="/cliente/alojamientos" routerLinkActive="active" class="nav-link">Alojamientos</a>
       <a routerLink="/cliente/reservas" routerLinkActive="active" class="nav-link">Mis Reservas</a>
       <a routerLink="/cliente/favoritos" routerLinkActive="active" class="nav-link">Favoritos <span class="badge" *ngIf="count > 0">{{ count }}</span></a>
@@ -12,7 +14,7 @@
       <a routerLink="/cliente/perfil" routerLinkActive="active" class="nav-link">Mi Perfil</a>
     </div>
 
-    <div class="navbar-actions">
+    <div class="navbar-actions" [class.open]="menuOpen">
       <a routerLink="/cliente/gastronomia" class="ir-restaurantes" title="Ver restaurantes">
         🍽️ Ir a Restaurantes
       </a>

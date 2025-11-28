@@ -57,4 +57,7 @@ export class AdminNavbarComponent implements OnInit {
     console.log('🔍 Admin Navbar - Es gastronomía?', this.isGastronomia);
     console.log('🔍 Admin Navbar - Links actuales:', this.links);
   }
+
+  menuOpen = false;
+  toggleMenu() { this.menuOpen = !this.menuOpen; }
 }

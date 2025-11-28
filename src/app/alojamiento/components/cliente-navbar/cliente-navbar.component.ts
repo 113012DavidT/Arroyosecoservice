@@ -24,4 +24,7 @@ export class ClienteNavbarComponent {
     this.auth.logout();
     this.router.navigate(['/login']);
   }
+
+  menuOpen = false;
+  toggleMenu() { this.menuOpen = !this.menuOpen; }
 }
