@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -40,6 +41,7 @@ export class GestionReservasComponent implements OnInit {
   private alojamientosService = inject(AlojamientoService);
   private userService = inject(UserService);
   private api = inject(ApiService);
+  private sanitizer = inject(DomSanitizer);
 
   searchTerm = '';
   hospedajeFiltro: string | null = null;
@@ -160,6 +162,18 @@ export class GestionReservasComponent implements OnInit {
     // Fallback apunta al endpoint documentado: GET /api/reservas/{id}/comprobante
     const base = this.api.baseUrl.replace(/\/$/, '');
     return `${base}/reservas/${reserva.id}/comprobante`;
+  }
+
+  isPdfUrl(reserva: ReservaUI): boolean {
+    const url = this.comprobanteVerUrl(reserva) || '';
+    return /\.pdf(\?|#|$)/i.test(url);
+  }
+
+  pdfSafeUrl(reserva: ReservaUI): SafeResourceUrl {
+    const url = this.comprobanteVerUrl(reserva);
+    // Oculta toolbar para vista más limpia cuando es compatible
+    const withParams = url.includes('#') || url.includes('?') ? url : `${url}#toolbar=0`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(withParams);
   }
 
   descargarComprobante(reserva: ReservaUI) {

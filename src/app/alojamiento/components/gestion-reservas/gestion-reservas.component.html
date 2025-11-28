@@ -86,11 +86,19 @@
 
       <div class="comprobante">
         <strong>Comprobante:</strong>
+        <!-- Vista previa primero (imagen o PDF) -->
+        <div class="comp-preview" *ngIf="comprobanteVerUrl(r) as verUrl">
+          <ng-container *ngIf="!isPdfUrl(r); else pdfPreview">
+            <img [src]="verUrl" alt="Comprobante" class="comprobante-img" />
+          </ng-container>
+          <ng-template #pdfPreview>
+            <iframe class="comprobante-pdf" title="Comprobante PDF" [src]="pdfSafeUrl(r)"></iframe>
+          </ng-template>
+        </div>
+
+        <!-- Botón debajo, como pediste -->
         <div class="comp-actions">
           <button type="button" class="btn" (click)="descargarComprobante(r)">Descargar comprobante</button>
-        </div>
-        <div *ngIf="r.comprobanteUrl && !r.comprobanteUrl.endsWith('.pdf')" class="comp-preview">
-          <img [src]="r.comprobanteUrl" alt="Comprobante" class="comprobante-img" />
         </div>
       </div>
     </div>
