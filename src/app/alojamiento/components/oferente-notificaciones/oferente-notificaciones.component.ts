@@ -67,13 +67,16 @@ export class OferenteNotificacionesComponent implements OnInit {
     this.loading = true;
     this.notiService.list(false).pipe(first()).subscribe({
       next: (data: NotificacionDto[]) => {
-        this.notificaciones = (data || []).map(d => ({
-          id: String(d.id),
-          titulo: d.titulo || 'Notificación',
-          mensaje: d.mensaje,
-          fecha: d.fecha || new Date().toLocaleDateString(),
-          leida: !!d.leida
-        }));
+        this.notificaciones = (data || []).map(d => {
+          const rawId = (d as any)?.id ?? (d as any)?.ID ?? (d as any)?.notificacionId ?? (d as any)?.NotificacionId;
+          return {
+            id: String(rawId ?? ''),
+            titulo: d.titulo || 'Notificación',
+            mensaje: d.mensaje,
+            fecha: d.fecha || new Date().toLocaleDateString(),
+            leida: !!d.leida
+          };
+        }).filter(n => n.id !== '');
         this.loading = false;
       },
       error: () => {

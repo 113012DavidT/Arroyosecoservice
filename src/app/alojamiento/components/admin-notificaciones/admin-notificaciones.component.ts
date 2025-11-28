@@ -5,10 +5,12 @@ import { NotificacionesService, NotificacionDto } from '../../services/notificac
 import { first } from 'rxjs/operators';
 
 interface Notificacion {
+  id: string;
   nombre: string;
   telefono: string;
   negocio: string;
   estatus: 'Abierta' | 'Atendida';
+  leida: boolean;
 }
 
 @Component({
@@ -35,11 +37,13 @@ export class AdminNotificacionesComponent implements OnInit {
     this.notiService.list(false).pipe(first()).subscribe({
       next: (data: NotificacionDto[]) => {
         this.notificaciones = (data || []).map(d => ({
+          id: String((d as any)?.id ?? (d as any)?.ID ?? (d as any)?.notificacionId ?? ''),
           nombre: d.titulo || 'Solicitud',
           telefono: '',
           negocio: '',
-          estatus: d.leida ? 'Atendida' : 'Abierta'
-        }));
+          estatus: d.leida ? 'Atendida' : 'Abierta',
+          leida: !!d.leida
+        })).filter(n => !!n.id);
         this.loading = false;
       },
       error: () => {
@@ -53,5 +57,16 @@ export class AdminNotificacionesComponent implements OnInit {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.notificaciones;
     return this.notificaciones.filter(item => [item.nombre, item.telefono, item.negocio].some(v => v.toLowerCase().includes(term)));
+  }
+
+  marcarLeida(n: Notificacion) {
+    if (!n.id) return;
+    this.notiService.marcarLeida(n.id).pipe(first()).subscribe({
+      next: () => {
+        n.leida = true;
+        n.estatus = 'Atendida';
+      },
+      error: () => this.error = 'No se pudo marcar como leída'
+    });
   }
 }

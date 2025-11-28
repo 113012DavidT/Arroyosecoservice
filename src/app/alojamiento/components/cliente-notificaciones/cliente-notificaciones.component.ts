@@ -5,7 +5,7 @@ import { NotificacionesService, NotificacionDto } from '../../services/notificac
 import { first } from 'rxjs/operators';
 
 interface Notificacion {
-  id: number;
+  id: string;
   titulo: string;
   mensaje: string;
   fecha: Date;
@@ -35,14 +35,20 @@ export class ClienteNotificacionesComponent implements OnInit {
     this.loading.set(true);
     this.notiService.list(false).pipe(first()).subscribe({
       next: (data: NotificacionDto[]) => {
-        const mapped = (data || []).map(d => ({
-          id: typeof d.id === 'string' ? parseInt(d.id, 10) : Number(d.id),
-          titulo: d.titulo || 'Notificación',
-          mensaje: d.mensaje,
-          fecha: d.fecha ? new Date(d.fecha) : new Date(),
-          leida: !!d.leida,
-          tipo: 'sistema' as const
-        }));
+        const mapped = (data || [])
+          .map(d => {
+            const rawId = (d as any)?.id ?? (d as any)?.ID ?? (d as any)?.notificacionId ?? (d as any)?.NotificacionId;
+            if (rawId === undefined || rawId === null || rawId === '') return null;
+            return {
+              id: String(rawId),
+              titulo: d.titulo || 'Notificación',
+              mensaje: d.mensaje,
+              fecha: d.fecha ? new Date(d.fecha) : new Date(),
+              leida: !!d.leida,
+              tipo: 'sistema' as const
+            } as Notificacion;
+          })
+          .filter((n): n is Notificacion => !!n);
         this.notificaciones.set(mapped);
         this.loading.set(false);
       },

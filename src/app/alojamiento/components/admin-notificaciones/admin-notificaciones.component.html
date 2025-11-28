@@ -37,6 +37,9 @@
           </td>
           <td class="actions">
             <button type="button" class="btn view">Vista</button>
+            <button type="button" class="btn mark" [disabled]="notificacion.leida" (click)="marcarLeida(notificacion)">
+              {{ notificacion.leida ? 'Leída' : 'Marcar como leída' }}
+            </button>
           </td>
         </tr>
       </tbody>
