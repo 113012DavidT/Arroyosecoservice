@@ -230,11 +230,11 @@ export class DetalleAlojamientoComponent implements OnInit {
   }
 
   private formatDateLocal(d: Date): string {
-    // Return YYYY-MM-DD (backend expects string, not DateTime)
+    // Enviar como YYYY-MM-DDT00:00:00 para mayor compatibilidad con DateTime en backend
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}T00:00:00`;
   }
 
   abrirComoLlegar() {

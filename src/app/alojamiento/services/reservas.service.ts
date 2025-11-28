@@ -122,6 +122,7 @@ export class ReservasService {
     form.append('FechaSalida', payload.fechaSalida);
     form.append('comprobante', archivo, archivo.name);
     form.append('Comprobante', archivo, archivo.name);
+    form.append('archivo', archivo, archivo.name);
 
     const tryEndpoints = [
       '/reservas/crear-con-comprobante',
