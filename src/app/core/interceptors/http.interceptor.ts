@@ -18,7 +18,11 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(reqToSend).pipe(
     catchError((error: HttpErrorResponse) => {
-      console.error('HTTP Error:', error.status, error.url, error.error);
+      // Omitir log si la petición marca cabecera de silencio
+      const skipLog = req.headers.has('X-Skip-Error-Log');
+      if (!skipLog) {
+        console.error('HTTP Error:', error.status, error.url, error.error);
+      }
       
       // If unauthorized on a protected call, clear token and redirect to appropriate login
       // BUT: No hacer logout en POST de creación de reservas (podría ser error del backend, no de auth)

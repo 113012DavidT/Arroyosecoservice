@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { HttpHeaders } from '@angular/common/http';
 
 export interface NotificacionDto {
   id: number | string;
@@ -49,15 +50,22 @@ export class NotificacionesService {
       modulo: payload.modulo || 'alojamiento',
       referenciaId: payload.referenciaId
     };
-    // Intento minúsculas y luego variante PascalCase
-    return this.api.post('/notificaciones', body).pipe(
+    // Header para que el interceptor omita el log de error (petición opcional)
+    const silentHeaders = new HttpHeaders({ 'X-Skip-Error-Log': 'true' });
+    return this.api.post('/notificaciones', body, silentHeaders).pipe(
+      // Si falla, probar variante PascalCase y si también falla, devolver null sin propagar error
       catchError(() => this.api.post('/Notificaciones', {
         Titulo: body.titulo,
         Mensaje: body.mensaje,
         DestinoRol: body.destinoRol,
         Modulo: body.modulo,
         ReferenciaId: body.referenciaId
-      }))
+      }, silentHeaders).pipe(
+        catchError(err2 => {
+          console.warn('Creación de notificación no soportada, se ignora:', err2?.status);
+          return of(null);
+        })
+      ))
     );
   }
 }

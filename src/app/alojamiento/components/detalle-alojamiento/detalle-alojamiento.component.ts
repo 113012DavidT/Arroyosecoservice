@@ -7,7 +7,7 @@ import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.s
 import { ReservasService } from '../../services/reservas.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { first, switchMap, catchError } from 'rxjs/operators';
+import { first, switchMap, catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -202,21 +202,26 @@ export class DetalleAlojamientoComponent implements OnInit {
       fechaSalida: this.formatDateLocal(this.booking.salida),
       huespedes: this.booking.huespedes
     };
-    // Simplificar: crear primero y luego subir comprobante siempre (evita 400 por ruta no soportada)
+    // Crear primero y subir comprobante; la notificación al oferente es opcional (si falla no afecta el éxito de la reserva)
     this.reservasService.crear(payload).pipe(
-      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!).pipe(
-        // Tras subir comprobante, crear notificación para oferente (Alojamiento)
-        switchMap(() => this.notiService.crear({
+      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!).pipe(map(() => r))),
+      first()
+    ).subscribe({
+      next: (r: any) => {
+        // Disparar notificación de manera independiente y tolerante
+        this.notiService.crear({
           titulo: 'Reserva enviada',
           mensaje: `Nueva reserva en alojamiento #${this.alojamientoId}. Pago en revisión.`,
           destinoRol: 'oferente',
           modulo: 'alojamiento',
           referenciaId: Number(r.id || r.Id)
-        }))
-      )),
-      first()
-    ).subscribe({
-      next: () => {
+        }).pipe(
+          catchError(err => {
+            console.warn('Notificación opcional falló (se ignora):', err);
+            return of(null);
+          })
+        ).subscribe();
+
         console.log('Reserva creada exitosamente');
         this.toast.success('Reserva enviada. Pago en revisión.');
         this.creando = false;
@@ -228,7 +233,6 @@ export class DetalleAlojamientoComponent implements OnInit {
         console.error('Error al crear reserva:', err);
         const msg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Error desconocido');
         this.toast.error(`No se pudo procesar la reserva: ${msg}`);
-        this.toast.error('No se pudo procesar la reserva');
         this.creando = false;
       }
     });
